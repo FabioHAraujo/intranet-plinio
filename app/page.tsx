@@ -1,101 +1,129 @@
-import Image from "next/image";
+'use client'
 
-export default function Home() {
+import { useState, useEffect } from 'react'
+import { Button } from "@/components/ui/button"
+import { Input } from "@/components/ui/input"
+import { House, Phone, PartyPopper, HelpCircle, UtensilsCrossed, Menu, Moon, Sun, UsersRound } from "lucide-react"
+import Link from "next/link"
+import Image from 'next/image'
+
+// Páginas
+import Home from './components/Home/page'
+import Funcionarios from './components/Funcionarios/page'
+import RamalList from './components/Ramais/page'
+import Cardapio from './components/Cardapio/page'
+
+import logo from '@/assets/logo.png'
+
+export default function Component() {
+  const [pagina, setPagina] = useState('Home')
+  const [theme, setTheme] = useState('light')
+
+  useEffect(() => {
+    const savedTheme = localStorage.getItem('theme') || 'light'
+    setTheme(savedTheme)
+    document.documentElement.classList.toggle('dark', savedTheme === 'dark')
+  }, [])
+
+  const toggleTheme = () => {
+    const newTheme = theme === 'light' ? 'dark' : 'light'
+    setTheme(newTheme)
+    localStorage.setItem('theme', newTheme)
+    document.documentElement.classList.toggle('dark', newTheme === 'dark')
+  }
+
   return (
-    <div className="grid grid-rows-[20px_1fr_20px] items-center justify-items-center min-h-screen p-8 pb-20 gap-16 sm:p-20 font-[family-name:var(--font-geist-sans)]">
-      <main className="flex flex-col gap-8 row-start-2 items-center sm:items-start">
-        <Image
-          className="dark:invert"
-          src="https://nextjs.org/icons/next.svg"
-          alt="Next.js logo"
-          width={180}
-          height={38}
-          priority
-        />
-        <ol className="list-inside list-decimal text-sm text-center sm:text-left font-[family-name:var(--font-geist-mono)]">
-          <li className="mb-2">
-            Get started by editing{" "}
-            <code className="bg-black/[.05] dark:bg-white/[.06] px-1 py-0.5 rounded font-semibold">
-              app/page.tsx
-            </code>
-            .
-          </li>
-          <li>Save and see your changes instantly.</li>
-        </ol>
-
-        <div className="flex gap-4 items-center flex-col sm:flex-row">
-          <a
-            className="rounded-full border border-solid border-transparent transition-colors flex items-center justify-center bg-foreground text-background gap-2 hover:bg-[#383838] dark:hover:bg-[#ccc] text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="https://nextjs.org/icons/vercel.svg"
-              alt="Vercel logomark"
-              width={20}
-              height={20}
-            />
-            Deploy now
-          </a>
-          <a
-            className="rounded-full border border-solid border-black/[.08] dark:border-white/[.145] transition-colors flex items-center justify-center hover:bg-[#f2f2f2] dark:hover:bg-[#1a1a1a] hover:border-transparent text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 sm:min-w-44"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Read our docs
-          </a>
+    <div className="flex h-screen flex-col bg-background text-foreground">
+      {/* Sticky Header */}
+      <header className="sticky top-0 z-10 bg-background border-b">
+        <div className="flex h-16 items-center px-4 gap-4">
+          <Button variant="ghost" size="icon" className="md:hidden">
+            <Menu className="h-6 w-6" />
+            <span className="sr-only">Toggle menu</span>
+          </Button>
+          <Image
+            src={logo}
+            alt="Logo Plínio Fleck"
+            width={56}
+            height={56}
+          />
+          <Link href="#" onClick={() => setPagina('Home')}>
+            <h1 className="text-lg font-semibold p-4">Grupo Plínio Fleck</h1>
+          </Link>
+          <div className="ml-auto flex items-center gap-4">
+            <form className="hidden md:block">
+              <Input
+                type="search"
+                placeholder="Search..."
+                className="w-[200px] lg:w-[300px]"
+              />
+            </form>
+            <Button size="icon" variant="ghost" onClick={toggleTheme}>
+              {theme === 'light' ? <Moon className="h-5 w-5" /> : <Sun className="h-5 w-5" />}
+              <span className="sr-only">Toggle theme</span>
+            </Button>
+            <Button size="icon" variant="ghost">
+              <HelpCircle className="h-5 w-5" />
+              <span className="sr-only">Help</span>
+            </Button>
+          </div>
         </div>
-      </main>
-      <footer className="row-start-3 flex gap-6 flex-wrap items-center justify-center">
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="https://nextjs.org/icons/file.svg"
-            alt="File icon"
-            width={16}
-            height={16}
-          />
-          Learn
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="https://nextjs.org/icons/window.svg"
-            alt="Window icon"
-            width={16}
-            height={16}
-          />
-          Examples
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="https://nextjs.org/icons/globe.svg"
-            alt="Globe icon"
-            width={16}
-            height={16}
-          />
-          Go to nextjs.org →
-        </a>
-      </footer>
+      </header>
+      <div className="flex flex-1 overflow-hidden">
+        {/* Sidebar */}
+        <aside className="w-64 bg-muted hidden md:block overflow-y-auto border-r">
+          <nav className="flex flex-col gap-2 p-4">
+            <Link
+              href="#"
+              onClick={() => setPagina('Home')}
+              className="flex items-center gap-2 rounded-lg px-3 py-2 text-muted-foreground transition-all hover:text-foreground hover:bg-accent"
+            >
+              <House className="h-4 w-4" />
+              Home
+            </Link>
+            <Link
+              href="#"
+              onClick={() => setPagina('Ramais')}
+              className="flex items-center gap-2 rounded-lg px-3 py-2 text-muted-foreground transition-all hover:text-foreground hover:bg-accent"
+            >
+              <Phone className="h-4 w-4" />
+              Ramais
+            </Link>
+            <Link
+              href="#"
+              onClick={() => setPagina('Cardapio')}
+              className="flex items-center gap-2 rounded-lg px-3 py-2 text-muted-foreground transition-all hover:text-foreground hover:bg-accent"
+            >
+              <UtensilsCrossed className="h-4 w-4" />
+              Cardápio
+            </Link>
+            <Link
+              href="#"
+              onClick={() => setPagina('Funcionarios')}
+              className="flex items-center gap-2 rounded-lg px-3 py-2 text-muted-foreground transition-all hover:text-foreground hover:bg-accent"
+            >
+              <UsersRound className="h-4 w-4" />
+              Funcionários
+            </Link>
+            <Link
+              href="#"
+              onClick={() => setPagina('Homenagens')}
+              className="flex items-center gap-2 rounded-lg px-3 py-2 text-muted-foreground transition-all hover:text-foreground hover:bg-accent"
+            >
+              <PartyPopper className="h-4 w-4" />
+              Homenagens
+            </Link>
+          </nav>
+          <Button variant="destructive" className="absolute align-bottom left-4 bottom-4 w-56 hover:bg-red-900">Denuncie um Abuso</Button>
+        </aside>
+        {/* Main Content */}
+        <main className="flex-1 overflow-y-auto p-4">
+          {pagina==='Home' && <Home />}
+          {pagina==='Ramais' && <RamalList />}
+          {pagina==='Cardapio' && <Cardapio />}
+          {pagina==='Funcionarios' && <Funcionarios />}
+        </main>
+      </div>
     </div>
-  );
+  )
 }
