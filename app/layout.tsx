@@ -15,7 +15,7 @@ const geistMono = localFont({
 
 export const metadata: Metadata = {
   title: "Intranet Grupo Plínio Fleck",
-  description: "Criado por nós, para nós",
+  description: "Criado por nós, para nós, com a sua ajuda!",
 };
 
 export default function RootLayout({
