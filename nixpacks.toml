@@ -1,0 +1,7 @@
+providers = ["node"]
+
+[install]
+cmd = "npm install"
+
+[start]
+cmd = "npm run dev"
