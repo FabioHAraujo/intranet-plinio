@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react';
 import { Input } from "@/components/ui/input";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
+import { porcaria } from '@/lib/supabase';
 
 interface Ramal {
   id: number;
@@ -18,6 +19,8 @@ export default function RamalList() {
 
   // Buscar dados dos ramais ao carregar o componente
   useEffect(() => {
+    console.log("Isso tá imprimindo?")
+    console.log("AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA", porcaria)
     const fetchRamais = async () => {
       try {
         const response = await fetch('/api/ramais');
