@@ -3,12 +3,10 @@
 import { useState, useEffect } from 'react';
 import { Input } from "@/components/ui/input";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
-import { porcaria } from '@/lib/supabase';
-
 interface Ramal {
   id: number;
   nome: string;
-  ramal: number;
+  ramal: string;
   setor: string;
 }
 
@@ -19,28 +17,26 @@ export default function RamalList() {
 
   // Buscar dados dos ramais ao carregar o componente
   useEffect(() => {
-    console.log("Isso tá imprimindo?")
-    console.log("AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA", porcaria)
     const fetchRamais = async () => {
       try {
         const response = await fetch('/api/ramais');
         const data = await response.json();
-        setRamais(data);
+        setRamais(data);  // Certifique-se de que 'data' seja um array
         setLoading(false);
       } catch (error) {
         console.error('Erro ao buscar ramais:', error);
         setLoading(false);
       }
     };
-
+  
     fetchRamais();
   }, []);
 
-  const filteredRamals = ramais.filter((ramal) =>
+  const filteredRamals = Array.isArray(ramais) ? ramais.filter((ramal) =>
     ramal.nome.toLowerCase().includes(searchTerm.toLowerCase()) ||
     ramal.ramal.toString().includes(searchTerm) ||
     ramal.setor.toLowerCase().includes(searchTerm.toLowerCase())
-  );
+  ) : [];
 
   return (
     <div className="container mx-auto p-4 space-y-4">
