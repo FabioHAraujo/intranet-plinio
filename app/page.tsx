@@ -12,6 +12,7 @@ import Home from './components/Home/page'
 import Funcionarios from './components/Funcionarios/page'
 import RamalList from './components/Ramais/page'
 import Cardapio from './components/Cardapio/page'
+import HeroWithPhotoList from './components/Homenageados/page'
 
 import logo from '@/assets/logo.png'
 
@@ -122,6 +123,7 @@ export default function Component() {
           {pagina==='Ramais' && <RamalList />}
           {pagina==='Cardapio' && <Cardapio />}
           {pagina==='Funcionarios' && <Funcionarios />}
+          {pagina==='Homenagens' && <HeroWithPhotoList />}
         </main>
       </div>
     </div>

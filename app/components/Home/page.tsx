@@ -77,7 +77,7 @@ export default function Home() {
                   <Image
                     src={slide.imageUrl}
                     alt={slide.title}
-                    layout="fill"
+                    fill={true}
                     objectFit="cover"
                     className="rounded-xl cursor-pointer"
                     onClick={() => setIsModalOpen(true)}

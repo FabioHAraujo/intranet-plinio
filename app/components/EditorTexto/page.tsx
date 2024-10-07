@@ -13,6 +13,7 @@ const EditorDeTexto = ({
   onChange: (value: string) => void;
 }) => {
   const editor = useEditor({
+    immediatelyRender: false,
     editorProps: {
       attributes: {
         class:
