@@ -78,13 +78,13 @@ export default function Funcionarios() {
             <h3 className="text-lg font-semibold text-center">
               {funcionario.FUNCIONARIO || 'Nome não disponível'}
             </h3>
-            <p className="text-sm text-muted-foreground">
+            <p className="text-sm text-muted-foreground text-center center">
               Setor: {funcionario.SETOR || 'Setor não disponível'}
             </p>
-            <p className="text-sm text-muted-foreground">
+            <p className="text-sm text-muted-foreground text-center">
               Admissão: {funcionario.ADMISSAO ? new Date(funcionario.ADMISSAO).toLocaleDateString() : 'Data não disponível'}
             </p>
-            <p className="text-sm text-muted-foreground">
+            <p className="text-sm text-muted-foreground text-center">
               Anos na empresa: {calcularAnosNaEmpresa(funcionario.ADMISSAO)}
             </p>
           </div>
