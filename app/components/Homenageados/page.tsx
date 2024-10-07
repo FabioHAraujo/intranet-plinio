@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import Image from 'next/image';
+import Image from "next/image";
 import { Swiper, SwiperSlide } from 'swiper/react';
 import { Navigation, Pagination, Autoplay } from 'swiper/modules';
 import 'swiper/css';
@@ -56,8 +56,9 @@ export default function HeroWithPhotoList() {
                 src={image}
                 alt={`Hero image ${index + 1}`}
                 fill={true}
-                style={{objectFit:"cover"}}
-              />
+                style={{
+                  objectFit:"cover",
+                }} />
             </SwiperSlide>
           ))}
         </Swiper>
@@ -83,14 +84,15 @@ export default function HeroWithPhotoList() {
                     <Image
                       src={item.image}
                       alt={item.name}
-                      layout="fill"
-                      objectFit="cover"
                       className="transition-transform duration-300 ease-in-out transform hover:scale-110"
-                    />
+                      fill={true}
+                      style={{
+                        objectFit: "cover"
+                      }} />
                   </div>
                 </div>
               </DialogTrigger>
-              <DialogContent className="w-[80vw] h-[80vh]">
+              <DialogContent className="w-[80vw] h-[80vh]" aria-describedby='Modal' aria-description='Modal'>
                 <DialogHeader>
                   <DialogTitle>{item.name}</DialogTitle>
                 </DialogHeader>
@@ -99,8 +101,11 @@ export default function HeroWithPhotoList() {
                     <Image
                       src={selectedImage}
                       alt={item.name}
-                      objectFit="contain" // Garante que a imagem mantenha a proporção
-                    />
+                      style={{
+                        maxWidth: "100%",
+                        height: "auto",
+                        objectFit: "contain"
+                      }} />
                   </div>
                 )}
               </DialogContent>

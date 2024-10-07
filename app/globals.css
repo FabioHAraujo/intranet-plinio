@@ -99,3 +99,18 @@ body {
     @apply bg-background text-foreground;
   }
 }
+
+/* Customizando a seta "próximo" */
+.swiper-button-next {
+  color: white; /* Ou qualquer cor que você deseja */
+  mix-blend-mode: difference; /* Isso fará com que a cor seja o negativo do fundo */
+
+}
+
+/* Alterar o tamanho das setas */
+.swiper-button-next, .swiper-button-prev {
+  width: 40px;
+  height: 40px;
+  margin-left: -0.4rem;
+}
+

@@ -1,17 +1,17 @@
 'use client'
 
-import { useState, useEffect } from 'react'
-import Image from 'next/image'
+import { useState } from 'react'
+import Image from "next/image"
 import { Button } from "@/components/ui/button"
 import { Dialog, DialogContent } from "@/components/ui/dialog"
+import { Swiper, SwiperSlide } from 'swiper/react';
+import { Navigation, Pagination, Autoplay } from 'swiper/modules';
+import 'swiper/css';
+import 'swiper/css/navigation';
+import 'swiper/css/pagination';
 import { X } from "lucide-react"
-import {
-  Carousel,
-  CarouselContent,
-  CarouselItem,
-  CarouselNext,
-  CarouselPrevious,
-} from "@/components/ui/carousel"
+
+// Imagens Temporárias
 import img1 from '@/assets/imagem1.jpg'
 import img2 from '@/assets/imagem2.jpg'
 import img3 from '@/assets/imagem3.jpg'
@@ -51,65 +51,75 @@ export default function Home() {
   const [currentSlide, setCurrentSlide] = useState(0)
   const [isModalOpen, setIsModalOpen] = useState(false)
   const [content, setContent] = useState('')
-
-  useEffect(() => {
-    const timer = setInterval(() => {
-      setCurrentSlide((prev) => (prev + 1) % carouselData.length)
-    }, 30000)
-
-    return () => clearInterval(timer)
-  }, [])
+  
 
   return (
     <div>
-      <Carousel
-        className="w-screen max-w-6xl mx-auto"
-      >
-        <CarouselContent>
-          {carouselData.map((slide) => (
-            <CarouselItem key={slide.id} >
-              <div className="flex h-[600px] p-6">
-                <div className="w-1/2 flex flex-col pr-6">
-                  <h2 className="text-3xl font-bold mb-4 pb-12">{slide.title}</h2>
-                  <p className="text-lg text-justify">{slide.description}</p>
-                </div>
-                <div className="w-1/2 relative">
-                  <Image
-                    src={slide.imageUrl}
-                    alt={slide.title}
-                    fill={true}
-                    objectFit="cover"
-                    className="rounded-xl cursor-pointer"
-                    onClick={() => setIsModalOpen(true)}
-                  />
-                </div>
+      <section className="w-full h-[60vh] px-4">
+        <Swiper
+          modules={[Navigation, Pagination, Autoplay]}
+          navigation
+          pagination={{ 
+            clickable: true,
+           }}
+          loop
+          className="w-full h-full rounded-lg flex"
+
+        >
+          {carouselData.map((slide, index) => (
+            <SwiperSlide key={index} className="!flex !flex-row items-center relative">
+              {/* Retângulos com as cores da bandeira do RS */}
+              <div className="absolute left-0 top-0 h-full flex">
+                <div className="bg-green-300 w-2"></div> {/* Verde */}
+                <div className="bg-yellow-300 w-2"></div> {/* Amarelo */}
+                <div className="bg-red-500 w-2"></div> {/* Vermelho */}
+                <div className="bg-gray-400 w-2"></div> {/* Vermelho */}
               </div>
-            </CarouselItem>
+              <div className="w-2/4 p-6 ml-4"> {/* Margem adicionada para compensar os retângulos */}
+                <h2 className="text-3xl font-bold mb-4">{slide.title}</h2>
+                <p className="text-lg text-justify">{slide.description}</p>
+              </div>
+              <div className="w-2/4 relative h-full">
+                <Image
+                  src={slide.imageUrl}
+                  alt={`Slide image ${index + 1}`}
+                  fill={true}
+                  className="object-cover rounded-xl"
+                  onClick={() => {
+                    setIsModalOpen(true);
+                    setCurrentSlide(index);
+                  }}
+                />
+              </div>
+            </SwiperSlide>
           ))}
-        </CarouselContent>
-        <CarouselPrevious />
-        <CarouselNext />
-      </Carousel>
+        </Swiper>
+      </section>
+
+
 
       <Cardapio />
-      <EditorDeTexto 
-        value={content}
-        onChange={(updatedContent: string) => {
-          setContent(updatedContent)
-          console.log(content)}} // Função onChange passada corretamente
-      />
+
+      <div className='p-4'>
+        <EditorDeTexto 
+          value={content}
+          onChange={(updatedContent: string) => {
+            setContent(updatedContent)
+            console.log(content)}} // Função onChange passada corretamente
+        />
+      </div>
 
       <Dialog open={isModalOpen} onOpenChange={setIsModalOpen}>
-        <DialogContent className="max-w-[50vw] max-h-[50vh] p-0 absolute">
-          <div className="relative w-full h-full">
+        <DialogContent className="p-0 absolute rounded-lg">
+          <div className="w-full h-full">
             <Image
               src={carouselData[currentSlide].imageUrl}
               alt={carouselData[currentSlide].title}
-              layout="responsive"
-              width={1920}
-              height={1080}
-              objectFit="contain"
-            />
+              sizes="100vw 100vh"
+              className='rounded-lg'
+              style={{
+                objectFit: "contain"
+              }} />
             <Button
               variant="outline"
               size="icon"
@@ -123,5 +133,5 @@ export default function Home() {
         </DialogContent>
       </Dialog>
     </div>
-  )
+  );
 }

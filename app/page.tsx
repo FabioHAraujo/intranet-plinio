@@ -5,7 +5,7 @@ import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { House, Phone, PartyPopper, HelpCircle, UtensilsCrossed, Menu, Moon, Sun, UsersRound } from "lucide-react"
 import Link from "next/link"
-import Image from 'next/image'
+import Image from "next/image"
 
 // Páginas
 import Home from './components/Home/page'
@@ -47,7 +47,10 @@ export default function Component() {
             alt="Logo Plínio Fleck"
             width={56}
             height={56}
-          />
+            style={{
+              maxWidth: "100%",
+              height: "auto"
+            }} />
           <Link href="#" onClick={() => setPagina('Home')}>
             <h1 className="text-lg font-semibold p-4">Grupo Plínio Fleck</h1>
           </Link>
@@ -127,5 +130,5 @@ export default function Component() {
         </main>
       </div>
     </div>
-  )
+  );
 }
