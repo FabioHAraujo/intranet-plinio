@@ -92,7 +92,7 @@ export default function HeroWithPhotoList() {
                   </div>
                 </div>
               </DialogTrigger>
-              <DialogContent className="w-[80vw] h-[80vh]" aria-describedby='Modal' aria-description='Modal'>
+              <DialogContent className="w-[80vw] h-[80vh]" aria-describedby='Modal'>
                 <DialogHeader>
                   <DialogTitle>{item.name}</DialogTitle>
                 </DialogHeader>
