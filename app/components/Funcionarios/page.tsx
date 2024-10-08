@@ -18,7 +18,7 @@ interface Funcionario {
 export default function Funcionarios() {
   const [funcionarios, setFuncionarios] = useState<Funcionario[]>([]);
   const [loading, setLoading] = useState(true);
-  const [expandedMonth, setExpandedMonth] = useState<string | null>(null);
+  const [expandedMonth, setExpandedMonth] = useState<string>("");
 
   useEffect(() => {
     const fetchFuncionarios = async () => {
@@ -64,15 +64,18 @@ export default function Funcionarios() {
       return anosDeServico - 1;
     }
   
-    return anosDeServico+1;
+    return anosDeServico + 1;
   };
 
-  const funcionariosPorMes = funcionarios.reduce((acc, funcionario) => {
-    const mesAniversario = new Date(funcionario.ADMISSAO).toLocaleString('default', { month: 'long' });
+  const funcionariosPorMesEDia = funcionarios.reduce((acc, funcionario) => {
+    const dataAdmissao = new Date(funcionario.ADMISSAO);
+    const mesAniversario = dataAdmissao.toLocaleString('default', { month: 'long' });
+    const diaAniversario = dataAdmissao.getDate();
+
     if (!acc[mesAniversario]) {
       acc[mesAniversario] = [];
     }
-    acc[mesAniversario].push(funcionario);
+    acc[mesAniversario].push({ ...funcionario, diaAniversario });
     return acc;
   }, {} as Record<string, Funcionario[]>);
 
@@ -81,9 +84,18 @@ export default function Funcionarios() {
     'julho', 'agosto', 'setembro', 'outubro', 'novembro', 'dezembro'
   ];
 
-  const mesesOrdenados = Object.keys(funcionariosPorMes).sort((a, b) => 
+  const mesesOrdenados = Object.keys(funcionariosPorMesEDia).sort((a, b) => 
     ordemMeses.indexOf(a.toLowerCase()) - ordemMeses.indexOf(b.toLowerCase())
   );
+
+  // Ordenar funcionários dentro de cada mês pelo dia de admissão
+  mesesOrdenados.forEach(mes => {
+    funcionariosPorMesEDia[mes].sort((a, b) => {
+      const diaA = new Date(a.ADMISSAO).getDate();
+      const diaB = new Date(b.ADMISSAO).getDate();
+      return diaA - diaB;
+    });
+  });
 
   return (
     <div className="w-full">
@@ -101,7 +113,7 @@ export default function Funcionarios() {
             </AccordionTrigger>
             <AccordionContent>
               <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
-                {funcionariosPorMes[mes].map((funcionario, index) => (
+                {funcionariosPorMesEDia[mes].map((funcionario, index) => (
                   <div key={index} className="rounded-lg border bg-card text-card-foreground shadow-sm">
                     <div className="p-6 flex flex-col items-center justify-center space-y-2">
                       <Image
@@ -118,7 +130,7 @@ export default function Funcionarios() {
                       <h3 className="text-lg font-semibold text-center">
                         {funcionario.FUNCIONARIO || 'Nome não disponível'}
                       </h3>
-                      <p className="text-sm text-muted-foreground text-center center">
+                      <p className="text-sm text-muted-foreground text-center">
                         Setor: {funcionario.SETOR || 'Setor não disponível'}
                       </p>
                       <p className="text-sm text-muted-foreground text-center">

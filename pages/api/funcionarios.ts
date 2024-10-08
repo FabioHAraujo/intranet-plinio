@@ -28,9 +28,9 @@ async function fetchFuncionarios() {
               ELSE R34FUN.DATADM
           END AS ADMISSAO
       FROM 
-          R034FUN R34FUN 
+          VETORH.R034FUN R34FUN 
       INNER JOIN 
-          R016ORN R16ORN 
+          VETORH.R016ORN R16ORN 
       ON 
           R16ORN.numloc = R34FUN.numloc
       WHERE
@@ -72,6 +72,6 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     const funcionarios = await fetchFuncionarios();
     res.status(200).json(funcionarios);
   } catch (error) {
-    res.status(500).json({ message: 'Erro ao buscar funcionários: ' + error });
+    res.status(500).json({ message: 'Erro ao buscar funcionários : ' + error});
   }
 }
