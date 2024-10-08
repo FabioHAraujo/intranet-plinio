@@ -16,20 +16,28 @@ async function fetchFuncionarios() {
     // Consulta SQL
     const result = await connection.execute(`
       SELECT DISTINCT
-        R34FUN.numcad AS CRACHA,
-        R34FUN.nomfun AS FUNCIONARIO, 
-        R16ORN.nomloc AS SETOR,
-        R34FUN.DATADM AS ADMISSAO
+          R34FUN.numcad AS CRACHA,
+          R34FUN.nomfun AS FUNCIONARIO, 
+          R16ORN.nomloc AS SETOR,
+          CASE 
+              WHEN R34FUN.numcad = '901312' THEN TO_DATE('15/07/2002', 'DD/MM/YYYY')
+              WHEN R34FUN.numcad = '152' THEN TO_DATE('01/03/1987', 'DD/MM/YYYY')
+              WHEN R34FUN.numcad = '400139' THEN TO_DATE('01/01/1988', 'DD/MM/YYYY')
+              WHEN R34FUN.numcad = '245' THEN TO_DATE('01/07/1982', 'DD/MM/YYYY')
+              WHEN R34FUN.numcad = '454' THEN TO_DATE('01/03/1976', 'DD/MM/YYYY')
+              ELSE R34FUN.DATADM
+          END AS ADMISSAO
       FROM 
-        R034FUN R34FUN 
+          R034FUN R34FUN 
       INNER JOIN 
-        R016ORN R16ORN 
+          R016ORN R16ORN 
       ON 
-        R16ORN.numloc = R34FUN.numloc
+          R16ORN.numloc = R34FUN.numloc
       WHERE
-        R34FUN.NUMEMP IN ('13','9','10')
-        AND R34FUN.SITAFA <> '9'
-      ORDER BY ADMISSAO
+          R34FUN.NUMEMP IN ('13','9','10')
+          AND R34FUN.SITAFA <> '9'
+      ORDER BY 
+          ADMISSAO
     `);
 
     // Transformando o resultado em um array de objetos
