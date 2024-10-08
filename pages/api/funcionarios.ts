@@ -36,6 +36,9 @@ async function fetchFuncionarios() {
       WHERE
           R34FUN.NUMEMP IN ('13','9','10')
           AND R34FUN.SITAFA <> '9'
+          AND R34FUN.SITAFA <> '23'
+          AND R34FUN.SITAFA <> '26'
+          AND R34FUN.SITAFA <> '25'
       ORDER BY 
           ADMISSAO
     `);

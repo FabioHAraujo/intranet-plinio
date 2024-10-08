@@ -64,7 +64,7 @@ export default function Funcionarios() {
       return anosDeServico - 1;
     }
   
-    return anosDeServico;
+    return anosDeServico+1;
   };
 
   const funcionariosPorMes = funcionarios.reduce((acc, funcionario) => {
@@ -125,7 +125,7 @@ export default function Funcionarios() {
                         Admissão: {funcionario.ADMISSAO ? new Date(funcionario.ADMISSAO).toLocaleDateString() : 'Data não disponível'}
                       </p>
                       <p className="text-sm text-muted-foreground text-center">
-                        Anos na empresa: {calcularAnosNaEmpresa(funcionario.ADMISSAO+1)}
+                        Anos na empresa: {calcularAnosNaEmpresa(funcionario.ADMISSAO)}
                       </p>
                     </div>
                   </div>
