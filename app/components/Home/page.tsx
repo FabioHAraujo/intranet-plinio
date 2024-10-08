@@ -103,9 +103,7 @@ export default function Home() {
       <div className='p-4'>
         <EditorDeTexto 
           value={content}
-          onChange={(updatedContent: string) => {
-            setContent(updatedContent)
-            console.log(content)}} // Função onChange passada corretamente
+          onChange={(updatedContent: string) => setContent(updatedContent)}
         />
       </div>
 

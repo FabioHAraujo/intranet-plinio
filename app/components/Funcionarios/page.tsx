@@ -26,8 +26,6 @@ export default function Funcionarios() {
         const response = await fetch('/api/funcionarios');
         const data = await response.json();
 
-        console.log("Dados recebidos da API:", data);
-
         if (Array.isArray(data)) {
           setFuncionarios(data);
         } else {

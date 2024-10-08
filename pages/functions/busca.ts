@@ -14,8 +14,6 @@ export async function FetchRamais() {
     .select('*')
     .order('nome', { ascending: true });
 
-  console.log('Supabase error:', error);
-
   if (error) throw new Error('Erro consultando ramais: ' + error.message);
   return data || [];
 }
