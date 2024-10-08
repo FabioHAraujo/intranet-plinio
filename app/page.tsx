@@ -13,6 +13,7 @@ import Funcionarios from './components/Funcionarios/page'
 import RamalList from './components/Ramais/page'
 import Cardapio from './components/Cardapio/page'
 import HeroWithPhotoList from './components/Homenageados/page'
+import Homenagens from './Homenagens/page'
 
 import logo from '@/assets/logo.png'
 
@@ -55,13 +56,6 @@ export default function Component() {
             <h1 className="text-lg font-semibold p-4">Grupo Plínio Fleck</h1>
           </Link>
           <div className="ml-auto flex items-center gap-4">
-            <form className="hidden md:block">
-              <Input
-                type="search"
-                placeholder="Search..."
-                className="w-[200px] lg:w-[300px]"
-              />
-            </form>
             <Button size="icon" variant="ghost" onClick={toggleTheme}>
               {theme === 'light' ? <Moon className="h-5 w-5" /> : <Sun className="h-5 w-5" />}
               <span className="sr-only">Toggle theme</span>
@@ -122,11 +116,11 @@ export default function Component() {
         </aside>
         {/* Main Content */}
         <main className="flex-1 overflow-y-auto p-4">
-          {pagina==='Home' && <Home />}
-          {pagina==='Ramais' && <RamalList />}
-          {pagina==='Cardapio' && <Cardapio />}
-          {pagina==='Funcionarios' && <Funcionarios />}
-          {pagina==='Homenagens' && <HeroWithPhotoList />}
+          {pagina === 'Home' && <Home />}
+          {pagina === 'Ramais' && <RamalList />}
+          {pagina === 'Cardapio' && <Cardapio />}
+          {pagina === 'Funcionarios' && <Funcionarios />}
+          {pagina === 'Homenagens' && <Homenagens />} {/* Modificado para incluir Homenagens */}
         </main>
       </div>
     </div>
