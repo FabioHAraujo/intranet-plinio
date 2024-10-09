@@ -2,17 +2,17 @@
 
 import { useState, useEffect } from 'react'
 import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
-import { House, Phone, PartyPopper, HelpCircle, UtensilsCrossed, Menu, Moon, Sun, UsersRound } from "lucide-react"
+import { House, Phone, PartyPopper, HelpCircle, UtensilsCrossed, Menu, Moon, Sun, UsersRound, ChevronRight, Cake, GraduationCap } from "lucide-react"
 import Link from "next/link"
 import Image from "next/image"
+import { Separator } from '@/components/ui/separator'
+import { motion, AnimatePresence } from 'framer-motion'
 
 // Páginas
 import Home from './components/Home/page'
 import Funcionarios from './components/Funcionarios/page'
 import RamalList from './components/Ramais/page'
 import Cardapio from './components/Cardapio/page'
-import HeroWithPhotoList from './components/Homenageados/page'
 import Homenagens from './Homenagens/page'
 
 import logo from '@/assets/logo.png'
@@ -20,6 +20,7 @@ import logo from '@/assets/logo.png'
 export default function Component() {
   const [pagina, setPagina] = useState('Home')
   const [theme, setTheme] = useState('light')
+  const [funcionariosExpanded, setFuncionariosExpanded] = useState(false)
 
   useEffect(() => {
     const savedTheme = localStorage.getItem('theme') || 'light'
@@ -32,6 +33,10 @@ export default function Component() {
     setTheme(newTheme)
     localStorage.setItem('theme', newTheme)
     document.documentElement.classList.toggle('dark', newTheme === 'dark')
+  }
+
+  const toggleFuncionarios = () => {
+    setFuncionariosExpanded(!funcionariosExpanded)
   }
 
   return (
@@ -97,20 +102,72 @@ export default function Component() {
             </Link>
             <Link
               href="#"
-              onClick={() => setPagina('Funcionarios')}
-              className="flex items-center gap-2 rounded-lg px-3 py-2 text-muted-foreground transition-all hover:text-foreground hover:bg-accent"
-            >
-              <UsersRound className="h-4 w-4" />
-              Funcionários
-            </Link>
-            <Link
-              href="#"
               onClick={() => setPagina('Homenagens')}
               className="flex items-center gap-2 rounded-lg px-3 py-2 text-muted-foreground transition-all hover:text-foreground hover:bg-accent"
             >
               <PartyPopper className="h-4 w-4" />
-              Homenagens
+              A trocar
             </Link>
+            <div className="flex flex-col">
+              <button
+                onClick={toggleFuncionarios}
+                className="flex items-center justify-between gap-2 rounded-lg px-3 py-2 text-muted-foreground transition-all hover:text-foreground hover:bg-accent"
+              >
+                <div className="flex items-center gap-2">
+                  <PartyPopper className="h-4 w-4" />
+                  Homenagens
+                </div>
+                <motion.div
+                  animate={{ rotate: funcionariosExpanded ? 90 : 0 }}
+                  transition={{ duration: 0.3 }}
+                >
+                  <ChevronRight className="h-4 w-4" />
+                </motion.div>
+              </button>
+              <AnimatePresence>
+                {funcionariosExpanded && (
+                  <motion.div
+                    initial={{ opacity: 0, height: 0 }}
+                    animate={{ opacity: 1, height: 'auto' }}
+                    exit={{ opacity: 0, height: 0 }}
+                    transition={{ duration: 0.3 }}
+                    className="ml-6 flex flex-col gap-2 overflow-hidden"
+                  >
+                    <Separator />
+                    <Link
+                      href="#"
+                      onClick={() => setPagina('Funcionarios')}
+                      className="rounded-lg px-3 py-2 text-muted-foreground transition-all hover:text-foreground hover:bg-accent"
+                    >
+                      <div className='flex items-center gap-2'>
+                        <UsersRound className="h-4 w-4" />
+                        Tempo de Empresa
+                      </div>
+                    </Link>
+                    <Link
+                      href="#"
+                      onClick={() => setPagina('NovoFuncionario')}
+                      className="rounded-lg px-3 py-2 text-muted-foreground transition-all hover:text-foreground hover:bg-accent"
+                    >
+                      <div className='flex items-center gap-2'>
+                        <Cake className="h-4 w-4" />
+                        Aniversariantes
+                      </div>
+                    </Link>
+                    <Link
+                      href="#"
+                      onClick={() => setPagina('RelatoriosFuncionarios')}
+                      className="rounded-lg px-3 py-2 text-muted-foreground transition-all hover:text-foreground hover:bg-accent"
+                    >
+                      <div className='flex items-center gap-2'>
+                        <GraduationCap className="h-4 w-4" />
+                        Formandos
+                      </div>
+                    </Link>
+                  </motion.div>
+                )}
+              </AnimatePresence>
+            </div>
           </nav>
           <Button variant="destructive" className="absolute align-bottom left-4 bottom-4 w-56 hover:bg-red-900">Denuncie um Abuso</Button>
         </aside>
@@ -120,7 +177,9 @@ export default function Component() {
           {pagina === 'Ramais' && <RamalList />}
           {pagina === 'Cardapio' && <Cardapio />}
           {pagina === 'Funcionarios' && <Funcionarios />}
-          {pagina === 'Homenagens' && <Homenagens />} {/* Modificado para incluir Homenagens */}
+          {pagina === 'Homenagens' && <Homenagens />}
+          {pagina === 'NovoFuncionario' && <div>Página de Aniversariantes que ainda não existe</div>}
+          {pagina === 'RelatoriosFuncionarios' && <div>Página de Formandos que ainda não existe</div>}
         </main>
       </div>
     </div>
