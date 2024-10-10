@@ -64,7 +64,7 @@ export default function Funcionarios() {
       return anosDeServico - 1;
     }
   
-    return anosDeServico + 1;
+    return (anosDeServico + 1);
   };
 
   const funcionariosPorMesEDia = funcionarios.reduce((acc, funcionario) => {
