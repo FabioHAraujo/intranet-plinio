@@ -61,10 +61,10 @@ export default function Funcionarios() {
     const mesAtual = hoje.getMonth();
     
     if (mesDeEntrada > mesAtual || (mesDeEntrada === mesAtual && entrada.getDate() > hoje.getDate())) {
-      return anosDeServico - 1;
+      return anosDeServico;
     }
   
-    return (anosDeServico + 1);
+    return anosDeServico;
   };
 
   const funcionariosPorMesEDia = funcionarios.reduce((acc, funcionario) => {
