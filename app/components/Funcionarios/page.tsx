@@ -113,37 +113,37 @@ export default function Funcionarios() {
             </AccordionTrigger>
             <AccordionContent>
               <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
-                {funcionariosPorMesEDia[mes].map((funcionario, index) => (
-                  <div key={index} className="rounded-lg border bg-card text-card-foreground shadow-sm">
-                    <div className="p-6 flex flex-col items-center justify-center space-y-2">
-                      <Image
-                        className="rounded-full bg-muted dark:brightness-[0.8]"
-                        src={imagem}
-                        alt={`Funcionário ${funcionario.FUNCIONARIO}`}
-                        width={96}
-                        height={96}
-                        style={{
-                          maxWidth: "100%",
-                          height: "auto"
-                        }} 
-                      />
-                      <h3 className="text-lg font-semibold text-center">
-                        {funcionario.FUNCIONARIO || 'Nome não disponível'}
-                      </h3>
-                      <p className="text-sm text-muted-foreground text-center">
-                        Setor: {funcionario.SETOR || 'Setor não disponível'}
-                      </p>
-                      <p className="text-sm text-muted-foreground text-center">
-                        Admissão: {funcionario.ADMISSAO ? new Date(funcionario.ADMISSAO).toLocaleDateString() : 'Data não disponível'}
-                      </p>
-                      {Number(calcularAnosNaEmpresa(funcionario.ADMISSAO)) > 0 && (
+                {funcionariosPorMesEDia[mes]
+                  .filter(funcionario => Number(calcularAnosNaEmpresa(funcionario.ADMISSAO)) > 0) // Filtra apenas os funcionários com mais de 0 anos
+                  .map((funcionario, index) => (
+                    <div key={index} className="rounded-lg border bg-card text-card-foreground shadow-sm">
+                      <div className="p-6 flex flex-col items-center justify-center space-y-2">
+                        <Image
+                          className="rounded-full bg-muted dark:brightness-[0.8]"
+                          src={imagem}
+                          alt={`Funcionário ${funcionario.FUNCIONARIO}`}
+                          width={96}
+                          height={96}
+                          style={{
+                            maxWidth: "100%",
+                            height: "auto"
+                          }} 
+                        />
+                        <h3 className="text-lg font-semibold text-center">
+                          {funcionario.FUNCIONARIO || 'Nome não disponível'}
+                        </h3>
+                        <p className="text-sm text-muted-foreground text-center">
+                          Setor: {funcionario.SETOR || 'Setor não disponível'}
+                        </p>
+                        <p className="text-sm text-muted-foreground text-center">
+                          Admissão: {funcionario.ADMISSAO ? new Date(funcionario.ADMISSAO).toLocaleDateString() : 'Data não disponível'}
+                        </p>
                         <p className="text-sm text-muted-foreground text-center">
                           Anos na empresa: {calcularAnosNaEmpresa(funcionario.ADMISSAO)}
                         </p>
-                      )}
+                      </div>
                     </div>
-                  </div>
-                ))}
+                  ))}
               </div>
             </AccordionContent>
           </AccordionItem>
