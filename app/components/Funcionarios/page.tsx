@@ -136,9 +136,11 @@ export default function Funcionarios() {
                       <p className="text-sm text-muted-foreground text-center">
                         Admissão: {funcionario.ADMISSAO ? new Date(funcionario.ADMISSAO).toLocaleDateString() : 'Data não disponível'}
                       </p>
-                      <p className="text-sm text-muted-foreground text-center">
-                        Anos na empresa: {calcularAnosNaEmpresa(funcionario.ADMISSAO)}
-                      </p>
+                      {Number(calcularAnosNaEmpresa(funcionario.ADMISSAO)) > 0 && (
+                        <p className="text-sm text-muted-foreground text-center">
+                          Anos na empresa: {calcularAnosNaEmpresa(funcionario.ADMISSAO)}
+                        </p>
+                      )}
                     </div>
                   </div>
                 ))}
