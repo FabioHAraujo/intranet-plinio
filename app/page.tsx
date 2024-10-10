@@ -13,7 +13,7 @@ import Home from './components/Home/page'
 import Funcionarios from './components/Funcionarios/page'
 import RamalList from './components/Ramais/page'
 import Cardapio from './components/Cardapio/page'
-import Homenagens from './Homenagens/page'
+import QuillEditor from './components/QuillEditor/page'
 
 import logo from '@/assets/logo.png'
 
@@ -21,6 +21,7 @@ export default function Component() {
   const [pagina, setPagina] = useState('Home')
   const [theme, setTheme] = useState('light')
   const [funcionariosExpanded, setFuncionariosExpanded] = useState(false)
+  const [content, setContent] = useState('');
 
   useEffect(() => {
     const savedTheme = localStorage.getItem('theme') || 'light'
@@ -102,11 +103,11 @@ export default function Component() {
             </Link>
             <Link
               href="#"
-              onClick={() => setPagina('Homenagens')}
+              onClick={() => setPagina('Eventos')}
               className="flex items-center gap-2 rounded-lg px-3 py-2 text-muted-foreground transition-all hover:text-foreground hover:bg-accent"
             >
               <PartyPopper className="h-4 w-4" />
-              A trocar
+              Eventos
             </Link>
             <div className="flex flex-col">
               <button
@@ -177,7 +178,7 @@ export default function Component() {
           {pagina === 'Ramais' && <RamalList />}
           {pagina === 'Cardapio' && <Cardapio />}
           {pagina === 'Funcionarios' && <Funcionarios />}
-          {pagina === 'Homenagens' && <Homenagens />}
+          {pagina === 'Eventos' && <QuillEditor  value={content} onChange={setContent} />}
           {pagina === 'NovoFuncionario' && <div>Página de Aniversariantes que ainda não existe</div>}
           {pagina === 'RelatoriosFuncionarios' && <div>Página de Formandos que ainda não existe</div>}
         </main>
