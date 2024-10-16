@@ -55,7 +55,7 @@ export default function Home() {
 
   return (
     <div>
-      <section className="w-full h-[60vh] px-4">
+      <section className="w-full h-5/6 px-4">
         <Swiper
           modules={[Navigation, Pagination, Autoplay]}
           navigation
@@ -67,7 +67,7 @@ export default function Home() {
 
         >
           {carouselData.map((slide, index) => (
-            <SwiperSlide key={index} className="!flex !flex-row items-center relative">
+            <SwiperSlide key={index} className="!flex !flex-row items-center h-auto relative">
               {/* Retângulos com as cores da bandeira do RS */}
               <div className="absolute left-0 top-0 h-full flex">
                 <div className="bg-green-300 w-2"></div> {/* Verde */}
@@ -75,11 +75,11 @@ export default function Home() {
                 <div className="bg-red-500 w-2"></div> {/* Vermelho */}
                 <div className="bg-gray-400 w-2"></div> {/* Vermelho */}
               </div>
-              <div className="w-2/4 p-6 ml-4"> {/* Margem adicionada para compensar os retângulos */}
+              <div className="w-2/4 p-6 ml-4 min-h-full flex flex-col justify-between"> {/* Adiciona `min-h-full` para garantir altura mínima */}
                 <h2 className="text-3xl font-bold mb-4">{slide.title}</h2>
-                <p className="text-lg text-justify">{slide.description}</p>
+                <p className="text-lg text-justify flex-grow">{slide.description}</p> {/* `flex-grow` faz o texto expandir */}
               </div>
-              <div className="w-2/4 relative h-full">
+              <div className="w-2/4 relative h-full aspect-[16/9]">
                 <Image
                   src={slide.imageUrl}
                   alt={`Slide image ${index + 1}`}

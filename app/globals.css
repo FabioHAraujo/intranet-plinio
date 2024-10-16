@@ -114,3 +114,7 @@ body {
   margin-left: -0.4rem;
 }
 
+.swiper-slide {
+  height: auto !important;
+}
+
