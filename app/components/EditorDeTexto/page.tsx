@@ -13,7 +13,7 @@ interface QuillEditorProps {
   onChange: (content: string) => void
 }
 
-export default function QuillEditor({ value, onChange }: QuillEditorProps) {
+export default function EditorDeTexto({ value, onChange }: QuillEditorProps) {
   const [isMounted, setIsMounted] = useState(false)
 
   useEffect(() => {

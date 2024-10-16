@@ -18,7 +18,6 @@ import img3 from '@/assets/imagem3.jpg'
 import img6 from '@/assets/imagem6.png'
 
 import Cardapio from '../Cardapio/page'
-import EditorDeTexto from '../EditorTexto/page'
 
 const carouselData = [
   {
@@ -49,9 +48,7 @@ const carouselData = [
 
 export default function Home() {
   const [currentSlide, setCurrentSlide] = useState(0)
-  const [isModalOpen, setIsModalOpen] = useState(false)
-  const [content, setContent] = useState('')
-  
+  const [isModalOpen, setIsModalOpen] = useState(false)  
 
   return (
     <div>
@@ -99,13 +96,6 @@ export default function Home() {
 
 
       <Cardapio />
-
-      <div className='p-4'>
-        <EditorDeTexto 
-          value={content}
-          onChange={(updatedContent: string) => setContent(updatedContent)}
-        />
-      </div>
 
       <Dialog open={isModalOpen} onOpenChange={setIsModalOpen}>
         <DialogContent className="p-0 absolute rounded-lg">

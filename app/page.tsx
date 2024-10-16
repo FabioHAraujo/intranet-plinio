@@ -11,9 +11,10 @@ import { motion, AnimatePresence } from 'framer-motion'
 // Páginas
 import Home from './components/Home/page'
 import Funcionarios from './components/Funcionarios/page'
+import Aniversariantes from './components/Aniversariantes/page'
 import RamalList from './components/Ramais/page'
 import Cardapio from './components/Cardapio/page'
-import QuillEditor from './components/QuillEditor/page'
+import EditorDeTexto from './components/EditorDeTexto/page'
 
 import logo from '@/assets/logo.png'
 
@@ -147,7 +148,7 @@ export default function Component() {
                     </Link>
                     <Link
                       href="#"
-                      onClick={() => setPagina('NovoFuncionario')}
+                      onClick={() => setPagina('Aniversariantes')}
                       className="rounded-lg px-3 py-2 text-muted-foreground transition-all hover:text-foreground hover:bg-accent"
                     >
                       <div className='flex items-center gap-2'>
@@ -178,8 +179,8 @@ export default function Component() {
           {pagina === 'Ramais' && <RamalList />}
           {pagina === 'Cardapio' && <Cardapio />}
           {pagina === 'Funcionarios' && <Funcionarios />}
-          {pagina === 'Eventos' && <QuillEditor  value={content} onChange={setContent} />}
-          {pagina === 'NovoFuncionario' && <div>Página de Aniversariantes que ainda não existe</div>}
+          {pagina === 'Eventos' && <EditorDeTexto  value={content} onChange={setContent} />}
+          {pagina === 'Aniversariantes' && <Aniversariantes />}
           {pagina === 'RelatoriosFuncionarios' && <div>Página de Formandos que ainda não existe</div>}
         </main>
       </div>
