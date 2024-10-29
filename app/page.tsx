@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react'
 import { Button } from "@/components/ui/button"
-import { House, Phone, PartyPopper, HelpCircle, UtensilsCrossed, Menu, Moon, Sun, UsersRound, ChevronRight, Cake, GraduationCap } from "lucide-react"
+import { House, Phone, PartyPopper, HelpCircle, UtensilsCrossed, Menu, Moon, Sun, UsersRound, ChevronRight, Cake, GraduationCap, Newspaper } from "lucide-react"
 import Link from "next/link"
 import Image from "next/image"
 import { Separator } from '@/components/ui/separator'
@@ -15,6 +15,7 @@ import Aniversariantes from './components/Aniversariantes/page'
 import RamalList from './components/Ramais/page'
 import Cardapio from './components/Cardapio/page'
 import EditorDeTexto from './components/EditorDeTexto/page'
+import Noticias from './components/Noticias/page'
 
 import logo from '@/assets/logo.png'
 
@@ -104,6 +105,14 @@ export default function Component() {
             </Link>
             <Link
               href="#"
+              onClick={() => setPagina('Noticias')}
+              className="flex items-center gap-2 rounded-lg px-3 py-2 text-muted-foreground transition-all hover:text-foreground hover:bg-accent"
+            >
+              <Newspaper className="h-4 w-4" />
+              Notícias
+            </Link>
+            <Link
+              href="#"
               onClick={() => setPagina('Eventos')}
               className="flex items-center gap-2 rounded-lg px-3 py-2 text-muted-foreground transition-all hover:text-foreground hover:bg-accent"
             >
@@ -179,6 +188,7 @@ export default function Component() {
           {pagina === 'Ramais' && <RamalList />}
           {pagina === 'Cardapio' && <Cardapio />}
           {pagina === 'Funcionarios' && <Funcionarios />}
+          {pagina === 'Noticias' && <Noticias />}
           {pagina === 'Eventos' && <EditorDeTexto  value={content} onChange={setContent} />}
           {pagina === 'Aniversariantes' && <Aniversariantes />}
           {pagina === 'RelatoriosFuncionarios' && <div>Página de Formandos que ainda não existe</div>}
