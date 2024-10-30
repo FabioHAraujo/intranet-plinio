@@ -17,28 +17,28 @@ const noticias: Noticia[] = [
   {
     id: 1,
     titulo: "Nova política de trabalho remoto anunciada",
-    imagemUrl: "https://hips.hearstapps.com/hmg-prod/images/gato-1603975456.gif?resize=640:*",
+    imagemUrl: "https://anapincolini.com.br/wp-content/uploads/2022/05/placeholder.gif",
     dataPublicacao: "2023-10-15",
     tags: ["RH", "Política"]
   },
   {
     id: 2,
     titulo: "Lançamento do novo produto previsto para o próximo trimestre",
-    imagemUrl: "https://hips.hearstapps.com/hmg-prod/images/gato-1603975456.gif?resize=640:*",
+    imagemUrl: "https://anapincolini.com.br/wp-content/uploads/2022/05/placeholder.gif",
     dataPublicacao: "2023-10-10",
     tags: ["Produto", "Lançamento"]
   },
   {
     id: 3,
     titulo: "Resultados financeiros do Q3 superam expectativas",
-    imagemUrl: "https://hips.hearstapps.com/hmg-prod/images/gato-1603975456.gif?resize=640:*",
+    imagemUrl: "https://anapincolini.com.br/wp-content/uploads/2022/05/placeholder.gif",
     dataPublicacao: "2023-10-05",
     tags: ["Finanças", "Relatório"]
   },
   {
     id: 4,
     titulo: "Tá sol e não tá chuva - Dizem as telemetrias do clima",
-    imagemUrl: "https://hips.hearstapps.com/hmg-prod/images/gato-1603975456.gif?resize=640:*",
+    imagemUrl: "https://anapincolini.com.br/wp-content/uploads/2022/05/placeholder.gif",
     dataPublicacao: "2024-10-05",
     tags: ["Clima", "Tempo"]
   }
