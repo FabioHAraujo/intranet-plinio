@@ -14,8 +14,11 @@ import Funcionarios from './components/Funcionarios/page'
 import Aniversariantes from './components/Aniversariantes/page'
 import RamalList from './components/Ramais/page'
 import Cardapio from './components/Cardapio/page'
-import EditorDeTexto from './components/EditorDeTexto/page'
+// import EditorDeTexto from './components/EditorDeTexto/page'
 import Noticias from './components/Noticias/page'
+import HeroWithPhotoList from './components/Homenageados/page'
+import Homenagens1 from './components/Homenagens1/page'
+import Homenagens2 from './components/Homenagens2/page'
 
 import logo from '@/assets/logo.png'
 
@@ -119,6 +122,22 @@ export default function Component() {
               <PartyPopper className="h-4 w-4" />
               Eventos
             </Link>
+            <Link
+              href="#"
+              onClick={() => setPagina('Homenagens1')}
+              className="flex items-center gap-2 rounded-lg px-3 py-2 text-muted-foreground transition-all hover:text-foreground hover:bg-accent"
+            >
+              <PartyPopper className="h-4 w-4" />
+              Homenagens1
+            </Link>
+            <Link
+              href="#"
+              onClick={() => setPagina('Homenagens2')}
+              className="flex items-center gap-2 rounded-lg px-3 py-2 text-muted-foreground transition-all hover:text-foreground hover:bg-accent"
+            >
+              <PartyPopper className="h-4 w-4" />
+              Homenagens2
+            </Link>
             <div className="flex flex-col">
               <button
                 onClick={toggleFuncionarios}
@@ -189,7 +208,9 @@ export default function Component() {
           {pagina === 'Cardapio' && <Cardapio />}
           {pagina === 'Funcionarios' && <Funcionarios />}
           {pagina === 'Noticias' && <Noticias />}
-          {pagina === 'Eventos' && <EditorDeTexto  value={content} onChange={setContent} />}
+          {pagina === 'Eventos' && <HeroWithPhotoList />}
+          {pagina === 'Homenagens1' && <Homenagens1 />}
+          {pagina === 'Homenagens2' && <Homenagens2 />}
           {pagina === 'Aniversariantes' && <Aniversariantes />}
           {pagina === 'RelatoriosFuncionarios' && <div>Página de Formandos que ainda não existe</div>}
         </main>
