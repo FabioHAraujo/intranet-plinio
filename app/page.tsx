@@ -25,8 +25,8 @@ import logo from '@/assets/logo.png'
 export default function Component() {
   const [pagina, setPagina] = useState('Home')
   const [theme, setTheme] = useState('light')
+  const [homenagensExpanded, setHomenagensExpanded] = useState(false)
   const [funcionariosExpanded, setFuncionariosExpanded] = useState(false)
-  const [content, setContent] = useState('');
 
   useEffect(() => {
     const savedTheme = localStorage.getItem('theme') || 'light'
@@ -43,6 +43,10 @@ export default function Component() {
 
   const toggleFuncionarios = () => {
     setFuncionariosExpanded(!funcionariosExpanded)
+  }
+
+  const toggleHomenagens = () => {
+    setHomenagensExpanded(!homenagensExpanded)
   }
 
   return (
@@ -114,30 +118,56 @@ export default function Component() {
               <Newspaper className="h-4 w-4" />
               Notícias
             </Link>
-            <Link
-              href="#"
-              onClick={() => setPagina('Eventos')}
-              className="flex items-center gap-2 rounded-lg px-3 py-2 text-muted-foreground transition-all hover:text-foreground hover:bg-accent"
-            >
-              <PartyPopper className="h-4 w-4" />
-              Eventos
-            </Link>
-            <Link
-              href="#"
-              onClick={() => setPagina('Homenagens1')}
-              className="flex items-center gap-2 rounded-lg px-3 py-2 text-muted-foreground transition-all hover:text-foreground hover:bg-accent"
-            >
-              <PartyPopper className="h-4 w-4" />
-              Homenagens1
-            </Link>
-            <Link
-              href="#"
-              onClick={() => setPagina('Homenagens2')}
-              className="flex items-center gap-2 rounded-lg px-3 py-2 text-muted-foreground transition-all hover:text-foreground hover:bg-accent"
-            >
-              <PartyPopper className="h-4 w-4" />
-              Homenagens2
-            </Link>
+            <div className="flex flex-col">
+              <button
+                onClick={toggleHomenagens}
+                className="flex items-center justify-between gap-2 rounded-lg px-3 py-2 text-muted-foreground transition-all hover:text-foreground hover:bg-accent"
+              >
+                <div className="flex items-center gap-2">
+                  <PartyPopper className="h-4 w-4" />
+                  Homenagens
+                </div>
+                <motion.div
+                  animate={{ rotate: homenagensExpanded ? 90 : 0 }}
+                  transition={{ duration: 0.3 }}
+                >
+                  <ChevronRight className="h-4 w-4" />
+                </motion.div>
+              </button>
+              <AnimatePresence>
+                {homenagensExpanded && (
+                  <motion.div
+                    initial={{ opacity: 0, height: 0 }}
+                    animate={{ opacity: 1, height: 'auto' }}
+                    exit={{ opacity: 0, height: 0 }}
+                    transition={{ duration: 0.3 }}
+                    className="ml-6 flex flex-col gap-2 overflow-hidden"
+                  >
+                    <Separator />
+                    <Link
+                      href="#"
+                      onClick={() => setPagina('TempoDeEmpresa')}
+                      className="rounded-lg px-3 py-2 text-muted-foreground transition-all hover:text-foreground hover:bg-accent"
+                    >
+                      <div className='flex items-center gap-2'>
+                        <UsersRound className="h-4 w-4" />
+                        Tempo de Empresa
+                      </div>
+                    </Link>
+                    <Link
+                      href="#"
+                      onClick={() => setPagina('Formandos')}
+                      className="rounded-lg px-3 py-2 text-muted-foreground transition-all hover:text-foreground hover:bg-accent"
+                    >
+                      <div className='flex items-center gap-2'>
+                        <GraduationCap className="h-4 w-4" />
+                        Formandos
+                      </div>
+                    </Link>
+                  </motion.div>
+                )}
+              </AnimatePresence>
+            </div>
             <div className="flex flex-col">
               <button
                 onClick={toggleFuncionarios}
@@ -145,7 +175,7 @@ export default function Component() {
               >
                 <div className="flex items-center gap-2">
                   <PartyPopper className="h-4 w-4" />
-                  Homenagens
+                  Nossos Talentos
                 </div>
                 <motion.div
                   animate={{ rotate: funcionariosExpanded ? 90 : 0 }}
@@ -186,7 +216,7 @@ export default function Component() {
                     </Link>
                     <Link
                       href="#"
-                      onClick={() => setPagina('RelatoriosFuncionarios')}
+                      onClick={() => setPagina('Homenagens1')}
                       className="rounded-lg px-3 py-2 text-muted-foreground transition-all hover:text-foreground hover:bg-accent"
                     >
                       <div className='flex items-center gap-2'>
@@ -209,7 +239,8 @@ export default function Component() {
           {pagina === 'Funcionarios' && <Funcionarios />}
           {pagina === 'Noticias' && <Noticias />}
           {pagina === 'Eventos' && <HeroWithPhotoList />}
-          {pagina === 'Homenagens1' && <Homenagens1 />}
+          {pagina === 'Formandos' && <Homenagens1 titulo="Nossos Formandos" />}
+          {pagina === 'TempoDeEmpresa' && <Homenagens1 titulo="Nossa base, nosso orgulho" />}
           {pagina === 'Homenagens2' && <Homenagens2 />}
           {pagina === 'Aniversariantes' && <Aniversariantes />}
           {pagina === 'RelatoriosFuncionarios' && <div>Página de Formandos que ainda não existe</div>}
