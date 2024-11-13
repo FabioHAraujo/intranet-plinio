@@ -239,8 +239,8 @@ export default function Component() {
           {pagina === 'Funcionarios' && <Funcionarios />}
           {pagina === 'Noticias' && <Noticias />}
           {pagina === 'Eventos' && <HeroWithPhotoList />}
-          {pagina === 'Formandos' && <Homenagens1 titulo="Nossos Formandos" />}
-          {pagina === 'TempoDeEmpresa' && <Homenagens1 titulo="Nossa base, nosso orgulho" />}
+          {pagina === 'Formandos' && <Homenagens1 titulo="Nossos Formandos" tipo="formandos"/>}
+          {pagina === 'TempoDeEmpresa' && <Homenagens1 titulo="Nossa base, nosso orgulho" tipo="tempo_de_empresa"/>}
           {pagina === 'Homenagens2' && <Homenagens2 />}
           {pagina === 'Aniversariantes' && <Aniversariantes />}
           {pagina === 'RelatoriosFuncionarios' && <div>Página de Formandos que ainda não existe</div>}
