@@ -175,7 +175,7 @@ export default function Component() {
               >
                 <div className="flex items-center gap-2">
                   <Cake className="h-4 w-4" />
-                  Nossos Talentos
+                  Datas Comemorativas
                 </div>
                 <motion.div
                   animate={{ rotate: funcionariosExpanded ? 90 : 0 }}
