@@ -10,6 +10,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Textarea } from "@/components/ui/textarea";
 import { AlertCircle } from 'lucide-react';
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
+import { Separator } from '@/components/ui/separator';
 
 export default function AbuseReportForm() {
     const [isSubmitted, setIsSubmitted] = useState(false);
@@ -19,7 +20,7 @@ export default function AbuseReportForm() {
     const handleSubmit = async (event: React.FormEvent) => {
       event.preventDefault();
     
-      const individuo = (event.target as HTMLFormElement)["reported-person"].value;
+      // Captura apenas o campo de descrição
       const descricao = (event.target as HTMLFormElement).description.value;
     
       try {
@@ -28,7 +29,7 @@ export default function AbuseReportForm() {
           headers: {
             'Content-Type': 'application/json',
           },
-          body: JSON.stringify({ setor, individuo, descricao }),
+          body: JSON.stringify({ descricao }), // Passa apenas a descrição
         });
     
         if (response.ok) {
@@ -40,7 +41,7 @@ export default function AbuseReportForm() {
       } catch (error) {
         console.error("Erro ao enviar a denúncia:", error);
       }
-    };
+    };    
   
     if (isSubmitted) {
       return (
@@ -69,33 +70,15 @@ export default function AbuseReportForm() {
       <div className="flex items-center justify-center min-h-screen">
         <Card className="w-full max-w-md">
           <CardHeader>
-            <CardTitle>Denúncia de Abuso</CardTitle>
+            <CardTitle className='text-xl'>Canal de Tratamento de Denúncias</CardTitle>
             <CardDescription>
-              Use este formulário para denunciar situações de abuso no ambiente de trabalho. Sua denúncia será tratada com confidencialidade.
+            Esse tem canal tem como objetivo proporcionar um espaço para nossos funcionários realizar uma denúncia e/ou queixa que viola o nosso código de ética, onde o anonimato e sigilo serão garantidos.
+            <br/><br/>
+            Por favor, preencha as informações da forma mais completa e detalhada possível. Lembre-se: quanto mais detalhada for a sua denúncia, maiores serão as chances de que o fato seja identificado e solucionado.
             </CardDescription>
           </CardHeader>
           <CardContent>
             <form onSubmit={handleSubmit} className="space-y-4">
-              <div className="space-y-2">
-                <Label htmlFor="department">Setor onde ocorreu</Label>
-                <Select required onValueChange={(value) => setSetor(value)}>
-                  <SelectTrigger id="department">
-                    <SelectValue placeholder="Selecione o setor" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="Recursos Humanos">Recursos Humanos</SelectItem>
-                    <SelectItem value="Tecnologia da Informação">Tecnologia da Informação</SelectItem>
-                    <SelectItem value="Financeiro">Financeiro</SelectItem>
-                    <SelectItem value="Marketing">Marketing</SelectItem>
-                    <SelectItem value="Operações">Operações</SelectItem>
-                    <SelectItem value="Outro">Outro</SelectItem>
-                  </SelectContent>
-                </Select>
-              </div>
-              <div className="space-y-2">
-                <Label htmlFor="reported-person">Quem está sendo denunciado</Label>
-                <Input id="reported-person" placeholder="Nome da pessoa ou cargo" required />
-              </div>
               <div className="space-y-2">
                 <Label htmlFor="description">Descrição da situação</Label>
                 <Textarea
@@ -115,6 +98,18 @@ export default function AbuseReportForm() {
                 Voltar à Intranet
             </Button>
           </CardContent>
+          
+        </Card>
+        <Separator orientation="vertical" className="mx-4 h-96 w-[2px] bg-gray-300 opacity-80" />
+        <Card className="w-full max-w-md h-full p-4">
+          <CardContent className='p-0'>
+              <p className='border-gray-400 border-2 p-4 rounded-lg'>Após o registro da sugestão ou da denúncia, estas informações serão direcionadas a um comitê específico. Esse comitê será o responsável pelas investigações, e pela coleta de provas e evidências, buscando tratar com o maior sigilo e cautela estas situações, bem como por tomar as medidas disciplinares de acordo ao nosso código de ética da empresa.
+                <br/><br/>
+                Agradecemos o seu contato.
+                <br/> 
+                Grupo Plínio Fleck
+              </p>
+            </CardContent>
         </Card>
       </div>
     );

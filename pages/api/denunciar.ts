@@ -16,16 +16,19 @@ const transporter = nodemailer.createTransport({
   },
 });
 
-
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
   if (req.method === 'POST') {
-    const { setor, individuo, descricao } = req.body;
+    const { descricao } = req.body;
+
+    // Obtendo a data e hora atual
+    const now = new Date();
+    const dataOcorrencia = now.toLocaleDateString('pt-BR');
+    const horaOcorrencia = now.toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' });
 
     const subject = "DENÚNCIA ANÔNIMA - ABUSO!!!";
     const message = `
-      Setor da Denúncia: ${setor}
-
-      Indivíduo Denunciado: ${individuo}
+      Data da Ocorrência: ${dataOcorrencia}
+      Hora da Ocorrência: ${horaOcorrencia}
 
       Descrição da Situação: ${descricao}
     `;
