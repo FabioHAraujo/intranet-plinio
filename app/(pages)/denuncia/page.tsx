@@ -1,26 +1,24 @@
-"use client"
+"use client";
 
-import { useRouter } from 'next/navigation'
-import { useState } from "react"
-import { Button } from "@/components/ui/button"
-import { Card, CardHeader, CardTitle, CardDescription, CardContent, CardFooter } from "@/components/ui/card"
-import { Input } from "@/components/ui/input"
-import { Label } from "@/components/ui/label"
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
-import { Textarea } from "@/components/ui/textarea"
-import { AlertCircle } from 'lucide-react'
-import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert"
-import denunciar from '@/pages/api/denunciar'
+import { useRouter } from 'next/navigation';
+import { useState } from "react";
+import { Button } from "@/components/ui/button";
+import { Card, CardHeader, CardTitle, CardDescription, CardContent, CardFooter } from "@/components/ui/card";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Textarea } from "@/components/ui/textarea";
+import { AlertCircle } from 'lucide-react';
+import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 
 export default function AbuseReportForm() {
     const [isSubmitted, setIsSubmitted] = useState(false);
-
+    const [setor, setSetor] = useState('');  // Estado para capturar o setor selecionado
     const router = useRouter();
   
     const handleSubmit = async (event: React.FormEvent) => {
       event.preventDefault();
     
-      const setor = (event.target as HTMLFormElement).department.value;
       const individuo = (event.target as HTMLFormElement)["reported-person"].value;
       const descricao = (event.target as HTMLFormElement).description.value;
     
@@ -43,7 +41,6 @@ export default function AbuseReportForm() {
         console.error("Erro ao enviar a denúncia:", error);
       }
     };
-    
   
     if (isSubmitted) {
       return (
@@ -81,17 +78,17 @@ export default function AbuseReportForm() {
             <form onSubmit={handleSubmit} className="space-y-4">
               <div className="space-y-2">
                 <Label htmlFor="department">Setor onde ocorreu</Label>
-                <Select required>
+                <Select required onValueChange={(value) => setSetor(value)}>
                   <SelectTrigger id="department">
                     <SelectValue placeholder="Selecione o setor" />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="rh">Recursos Humanos</SelectItem>
-                    <SelectItem value="ti">Tecnologia da Informação</SelectItem>
-                    <SelectItem value="financeiro">Financeiro</SelectItem>
-                    <SelectItem value="marketing">Marketing</SelectItem>
-                    <SelectItem value="operacoes">Operações</SelectItem>
-                    <SelectItem value="outro">Outro</SelectItem>
+                    <SelectItem value="Recursos Humanos">Recursos Humanos</SelectItem>
+                    <SelectItem value="Tecnologia da Informação">Tecnologia da Informação</SelectItem>
+                    <SelectItem value="Financeiro">Financeiro</SelectItem>
+                    <SelectItem value="Marketing">Marketing</SelectItem>
+                    <SelectItem value="Operações">Operações</SelectItem>
+                    <SelectItem value="Outro">Outro</SelectItem>
                   </SelectContent>
                 </Select>
               </div>
@@ -121,4 +118,4 @@ export default function AbuseReportForm() {
         </Card>
       </div>
     );
-  }
+}

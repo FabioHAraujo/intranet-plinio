@@ -4,13 +4,18 @@ import nodemailer from 'nodemailer';
 
 const transporter = nodemailer.createTransport({
   host: process.env.SMTP_SERVER,
-  port: parseInt(process.env.SMTP_PORT || '587', 10),
-  secure: false,
+  port: 587,
+  secure: false, // 'secure' é false para a porta 587 (STARTTLS)
   auth: {
     user: process.env.SMTP_USER,
     pass: process.env.SMTP_PASS,
   },
+  tls: {
+    ciphers: 'SSLv3',
+    rejectUnauthorized: false, // Pode ser necessário para alguns servidores
+  },
 });
+
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
   if (req.method === 'POST') {
@@ -28,7 +33,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     try {
       const info = await transporter.sendMail({
         from: `"Notificação" <${process.env.SMTP_USER}>`,
-        to: 'fabio-araujo@flecksteel.com.br',
+        to: `${process.env.SMTP_SENDTO}`,
         subject,
         text: message,
         html: `<pre>${message}</pre>`,
