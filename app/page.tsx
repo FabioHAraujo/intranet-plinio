@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react'
 import { Button } from "@/components/ui/button"
-import { House, Phone, PartyPopper, HelpCircle, UtensilsCrossed, Menu, Moon, Sun, UsersRound, ChevronRight, Cake, GraduationCap, Newspaper } from "lucide-react"
+import { House, Phone, PartyPopper, HelpCircle, UtensilsCrossed, Menu, Moon, Sun, UsersRound, ChevronRight, Cake, GraduationCap, Newspaper, CalendarHeart } from "lucide-react"
 import Link from "next/link"
 import Image from "next/image"
 import { Separator } from '@/components/ui/separator'
@@ -174,7 +174,7 @@ export default function Component() {
                 className="flex items-center justify-between gap-2 rounded-lg px-3 py-2 text-muted-foreground transition-all hover:text-foreground hover:bg-accent"
               >
                 <div className="flex items-center gap-2">
-                  <PartyPopper className="h-4 w-4" />
+                  <Cake className="h-4 w-4" />
                   Nossos Talentos
                 </div>
                 <motion.div
@@ -210,7 +210,7 @@ export default function Component() {
                       className="rounded-lg px-3 py-2 text-muted-foreground transition-all hover:text-foreground hover:bg-accent"
                     >
                       <div className='flex items-center gap-2'>
-                        <Cake className="h-4 w-4" />
+                        <CalendarHeart className="h-4 w-4" />
                         Aniversariantes
                       </div>
                     </Link>
