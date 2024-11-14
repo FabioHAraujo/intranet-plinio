@@ -30,8 +30,10 @@
     "embla-carousel-react": "^8.3.0",
     "express": "^4.21.0",
     "framer-motion": "^11.11.7",
+    "fs": "^0.0.1-security",
     "lucide-react": "^0.446.0",
     "next": "14.2.13",
+    "nodemailer": "^6.9.16",
     "pocketbase": "^0.21.5",
     "quill-image-resize-module-react": "^3.0.0",
     "react": "^18",
@@ -44,6 +46,7 @@
   },
   "devDependencies": {
     "@types/node": "^20",
+    "@types/nodemailer": "^6.4.16",
     "@types/oracledb": "^6.5.1",
     "@types/react": "^18",
     "@types/react-dom": "^18",

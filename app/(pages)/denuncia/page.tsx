@@ -10,18 +10,40 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Textarea } from "@/components/ui/textarea"
 import { AlertCircle } from 'lucide-react'
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert"
-import { redirect } from "next/dist/server/api-utils"
+import denunciar from '@/pages/api/denunciar'
 
 export default function AbuseReportForm() {
     const [isSubmitted, setIsSubmitted] = useState(false);
 
     const router = useRouter();
   
-    const handleSubmit = (event: React.FormEvent) => {
+    const handleSubmit = async (event: React.FormEvent) => {
       event.preventDefault();
-      setIsSubmitted(true);
-      console.log("Formulário enviado!");
+    
+      const setor = (event.target as HTMLFormElement).department.value;
+      const individuo = (event.target as HTMLFormElement)["reported-person"].value;
+      const descricao = (event.target as HTMLFormElement).description.value;
+    
+      try {
+        const response = await fetch('/api/denunciar', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({ setor, individuo, descricao }),
+        });
+    
+        if (response.ok) {
+          setIsSubmitted(true);
+          console.log("Formulário enviado com sucesso!");
+        } else {
+          console.error("Erro ao enviar a denúncia:", await response.json());
+        }
+      } catch (error) {
+        console.error("Erro ao enviar a denúncia:", error);
+      }
     };
+    
   
     if (isSubmitted) {
       return (
