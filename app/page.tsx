@@ -1,6 +1,7 @@
 'use client'
 
 import { useState, useEffect } from 'react'
+import { useRouter } from 'next/navigation'
 import { Button } from "@/components/ui/button"
 import { House, Phone, PartyPopper, HelpCircle, UtensilsCrossed, Menu, Moon, Sun, UsersRound, ChevronRight, Cake, GraduationCap, Newspaper, CalendarHeart } from "lucide-react"
 import Link from "next/link"
@@ -27,6 +28,8 @@ export default function Component() {
   const [theme, setTheme] = useState('light')
   const [homenagensExpanded, setHomenagensExpanded] = useState(false)
   const [funcionariosExpanded, setFuncionariosExpanded] = useState(false)
+  
+  const router = useRouter();
 
   useEffect(() => {
     const savedTheme = localStorage.getItem('theme') || 'light'
@@ -71,7 +74,7 @@ export default function Component() {
             <h1 className="text-lg font-semibold p-4">Grupo Plínio Fleck</h1>
           </Link>
           <div className="ml-auto flex items-center gap-4">
-            <Button variant="destructive" className="left-4 bottom-4 w-56 hover:bg-red-900">Denuncie um Abuso</Button>
+            <Button variant="destructive" className="left-4 bottom-4 w-56 hover:bg-red-900" onClick={() => router.push('/denuncia')}>Denuncie um Abuso</Button>
             <Button size="icon" variant="ghost" onClick={toggleTheme}>
               {theme === 'light' ? <Moon className="h-5 w-5" /> : <Sun className="h-5 w-5" />}
               <span className="sr-only">Toggle theme</span>

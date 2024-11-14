@@ -1,19 +1,32 @@
-'use server';
-import { supabase } from '@/lib/supabase';
+import PocketBase from 'pocketbase';
+
+// Configuração do PocketBase
+const pb = new PocketBase('https://pocketbase.flecksteel.com.br');
 
 export interface Ramais {
-  id: number
-  nome: string
-  ramal: string
-  setor: string
+  id: string;
+  nome: string;
+  ramal: string;
+  setor: string;
 }
 
-export async function FetchRamais() {
-  const { data, error } = await supabase
-    .from('ramais')
-    .select('*')
-    .order('nome', { ascending: true });
+export async function FetchRamais(): Promise<Ramais[]> {
+  try {
+    // Buscando todos os registros da coleção 'ramais' e ordenando por 'nome'
+    const records = await pb.collection('ramais').getFullList({
+      sort: 'nome',
+      fields: 'id,nome,ramal,setor',
+    });
 
-  if (error) throw new Error('Erro consultando ramais: ' + error.message);
-  return data || [];
+    // Mapeando os registros para o formato desejado
+    return records.map((record) => ({
+      id: record.id,
+      nome: record.nome,
+      ramal: record.ramal,
+      setor: record.setor,
+    }));
+  } catch (error) {
+    console.error('Erro ao buscar registros no PocketBase:', error);
+    throw new Error('Erro consultando ramais: ' + error);
+  }
 }
