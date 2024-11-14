@@ -5,7 +5,7 @@ import PocketBase from 'pocketbase';
 const pb = new PocketBase('https://pocketbase.flecksteel.com.br');
 
 // Interface para o tipo de resposta e tipo de registro do PocketBase
-interface TempoEmpresa {
+interface Formandos {
   id: string;
   nome: string;
   descricao: string;
@@ -19,7 +19,7 @@ interface PocketBaseRecord {
   thumbnail?: string;
 }
 
-async function fetchTempoEmpresa(): Promise<TempoEmpresa[]> {
+async function fetchTempoEmpresa(): Promise<Formandos[]> {
   try {
     // Buscando todos os registros da coleção 'formandos' com ordenação e campos específicos
     const records: PocketBaseRecord[] = await pb.collection('formandos').getFullList({
@@ -28,7 +28,7 @@ async function fetchTempoEmpresa(): Promise<TempoEmpresa[]> {
     });
 
     // Mapeando os registros para o formato desejado
-    const result: TempoEmpresa[] = records.map((record) => ({
+    const result: Formandos[] = records.map((record) => ({
       id: record.id,
       nome: record.nome,
       descricao: record.descricao,

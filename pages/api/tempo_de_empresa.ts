@@ -4,27 +4,37 @@ import PocketBase from 'pocketbase';
 // Configuração do PocketBase
 const pb = new PocketBase('https://pocketbase.flecksteel.com.br');
 
-// Interface para o tipo de resposta
+// Interface para o tipo de resposta e tipo de registro do PocketBase
 interface TempoEmpresa {
+  id: string;
   nome: string;
   descricao: string;
   thumbnail: string;
 }
 
+interface PocketBaseRecord {
+  id: string;
+  nome: string;
+  descricao: string;
+  thumbnail?: string;
+}
+
 async function fetchTempoEmpresa(): Promise<TempoEmpresa[]> {
   try {
     // Buscando todos os registros da coleção 'tempo_empresa' com ordenação e campos específicos
-    const records = await pb.collection('tempo_empresa').getFullList({
+    const records: PocketBaseRecord[] = await pb.collection('tempo_empresa').getFullList({
       sort: '-created',
-      fields: 'nome,descricao,thumbnail',
+      fields: 'id,nome,descricao,thumbnail',
     });
 
     // Mapeando os registros para o formato desejado
     const result: TempoEmpresa[] = records.map((record) => ({
+      id: record.id,
       nome: record.nome,
       descricao: record.descricao,
       thumbnail: record.thumbnail ? `https://pocketbase.flecksteel.com.br/api/files/tempo_empresa/${record.id}/${record.thumbnail}` : '',
     }));
+    console.log(result);
 
     return result;
   } catch (error) {
