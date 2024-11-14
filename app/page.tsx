@@ -214,16 +214,6 @@ export default function Component() {
                         Aniversariantes
                       </div>
                     </Link>
-                    <Link
-                      href="#"
-                      onClick={() => setPagina('Homenagens1')}
-                      className="rounded-lg px-3 py-2 text-muted-foreground transition-all hover:text-foreground hover:bg-accent"
-                    >
-                      <div className='flex items-center gap-2'>
-                        <GraduationCap className="h-4 w-4" />
-                        Formandos
-                      </div>
-                    </Link>
                   </motion.div>
                 )}
               </AnimatePresence>
@@ -243,7 +233,6 @@ export default function Component() {
           {pagina === 'TempoDeEmpresa' && <Homenagens1 titulo="Nossa base, nosso orgulho" tipo="tempo_de_empresa" />}
           {pagina === 'Homenagens2' && <Homenagens2 />}
           {pagina === 'Aniversariantes' && <Aniversariantes />}
-          {pagina === 'RelatoriosFuncionarios' && <div>Página de Formandos que ainda não existe</div>}
         </main>
       </div>
     </div>
