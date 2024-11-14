@@ -9,6 +9,7 @@ import {
   AccordionItem,
   AccordionTrigger,
 } from "@/components/ui/accordion";
+import Loading from '@/components/personal/Loading/page';
 
 interface Funcionario {
   CRACHA: number;
@@ -49,7 +50,7 @@ export default function Funcionarios() {
   }, []);
 
   if (loading) {
-    return <p>Carregando...</p>;
+    return <Loading/>
   }
 
   const calcularAnosNaEmpresa = (dataAdmissao: string) => {

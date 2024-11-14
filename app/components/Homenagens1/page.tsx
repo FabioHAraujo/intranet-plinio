@@ -58,11 +58,11 @@ export default function Homenagens1({ titulo, tipo }: HomenagensProps) {
                 objectPosition="top"
                 className="transition-transform duration-300 transform group-hover:scale-105"
               />
-              <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-black dark:from-white to-transparent h-2/3" />
+              <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-black dark:from-gray-400 to-transparent h-1/3" />
               <div className="absolute bottom-4 left-4 text-primary-foreground">
-                <h2 className="text-xl font-bold">{homenagem.nome}</h2>
-                <p className="text-sm pr-4 text-justify">{homenagem.descricao}</p>
-                <Badge className="relative text-xs mt-2">{tipo}</Badge>
+                <h2 className="text-xl font-bold text-white">{homenagem.nome}</h2>
+                <p className="text-sm pr-4 text-justify text-white">{homenagem.descricao}</p>
+                <Badge className="relative text-xs mt-2 text-white">{tipo}</Badge>
               </div>
             </div>
           </Card>

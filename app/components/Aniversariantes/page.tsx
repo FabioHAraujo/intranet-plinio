@@ -9,6 +9,7 @@ import {
   AccordionItem,
   AccordionTrigger,
 } from "@/components/ui/accordion";
+import Loading from '@/components/personal/Loading/page';
 
 interface Aniversario {
   CRACHA: number;
@@ -50,7 +51,7 @@ export default function Aniversariantes() {
   }, []);
 
   if (loading) {
-    return <p>Carregando...</p>;
+    return <Loading/>
   }
 
   const aniversariosPorMesEDia = aniversarios.reduce((acc, aniversario) => {
