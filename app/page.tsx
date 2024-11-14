@@ -71,6 +71,7 @@ export default function Component() {
             <h1 className="text-lg font-semibold p-4">Grupo Plínio Fleck</h1>
           </Link>
           <div className="ml-auto flex items-center gap-4">
+            <Button variant="destructive" className="left-4 bottom-4 w-56 hover:bg-red-900">Denuncie um Abuso</Button>
             <Button size="icon" variant="ghost" onClick={toggleTheme}>
               {theme === 'light' ? <Moon className="h-5 w-5" /> : <Sun className="h-5 w-5" />}
               <span className="sr-only">Toggle theme</span>
@@ -219,7 +220,6 @@ export default function Component() {
               </AnimatePresence>
             </div>
           </nav>
-          <Button variant="destructive" className="absolute align-bottom left-4 bottom-4 w-56 hover:bg-red-900">Denuncie um Abuso</Button>
         </aside>
         {/* Main Content */}
         <main className="flex-1 overflow-y-auto p-4">
