@@ -1,10 +1,10 @@
 import LayoutPadrao from '@/app/components/LayoutPadrao/page'
-import Home from './components/Home/page'
+import Cardapio from '@/app/components/Cardapio/page'
 
-export default function HomePage() {
+export default function RamaisPage() {
   return (
     <LayoutPadrao>
-      <Home />
+      <Cardapio />
     </LayoutPadrao>
   )
 }

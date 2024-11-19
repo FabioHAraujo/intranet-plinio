@@ -20,7 +20,7 @@ const noticias: Noticia[] = [
     id: 1,
     titulo: "Nova política de trabalho remoto anunciada",
     imagemUrl: "https://anapincolini.com.br/wp-content/uploads/2022/05/placeholder.gif",
-    dataPublicacao: "2023-10-15",
+    dataPublicacao: "2023-10-30",
     tags: ["RH", "Política"]
   },
   {
@@ -46,6 +46,12 @@ const noticias: Noticia[] = [
   }
 ]
 
+// Função para formatar a data sem alteração de fuso horário
+const formatDate = (dateString: string): string => {
+  const [year, month, day] = dateString.split('-')
+  return `${day}/${month}/${year}` // Formato DD/MM/YYYY
+}
+
 export default function Noticias() {
   return (
     <div className="container mx-auto px-4 py-8">
@@ -66,7 +72,8 @@ export default function Noticias() {
             <CardContent>
               <div className="flex items-center text-sm text-gray-500 mb-4">
                 <CalendarIcon className="mr-2 h-4 w-4" />
-                {new Date(noticia.dataPublicacao).toLocaleDateString('pt-BR')}
+                {/* Formata a data sem ajuste de horário */}
+                {formatDate(noticia.dataPublicacao)}
               </div>
               <div className="flex flex-wrap gap-2">
                 {noticia.tags.map((tag) => (

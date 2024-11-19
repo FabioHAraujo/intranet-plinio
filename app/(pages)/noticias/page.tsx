@@ -1,10 +1,10 @@
 import LayoutPadrao from '@/app/components/LayoutPadrao/page'
-import Home from './components/Home/page'
+import Noticias from '@/app/components/Noticias/page'
 
-export default function HomePage() {
+export default function NoticiasPage() {
   return (
     <LayoutPadrao>
-      <Home />
+      <Noticias />
     </LayoutPadrao>
   )
 }
