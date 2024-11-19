@@ -69,13 +69,18 @@ export default function Component({ titulo = "Homenagens", tipo = "default" }: H
                 </div>
               </Card>
             </DialogTrigger>
-            <DialogContent className="max-w-6xl">
-              <div className="relative aspect-[4/3] w-full">
+            <DialogContent
+              className="p-5 max-h-[80vh] flex items-center justify-center"
+              style={{ width: 'fit-content', maxWidth: 'calc(100% - 20px)' }}
+            >
+              <div className="relative max-w-full max-h-full">
                 <Image
                   src={homenagem.thumbnail}
                   alt={homenagem.nome}
-                  layout="fill"
-                  objectFit="contain"
+                  width={0}
+                  height={0}
+                  sizes="100vw"
+                  className="h-auto w-auto max-h-[70vh] max-w-[95vw] object-contain rounded-md"
                 />
               </div>
             </DialogContent>
