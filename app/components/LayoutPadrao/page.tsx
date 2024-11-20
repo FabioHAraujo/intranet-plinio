@@ -37,9 +37,17 @@ export default function LayoutPadrao({ children }: LayoutProps) {
   const router = useRouter()
 
   useEffect(() => {
+    // Recuperar tema no localstorage
     const savedTheme = localStorage.getItem('theme') || 'light'
     setTheme(savedTheme)
     document.documentElement.classList.toggle('dark', savedTheme === 'dark')
+
+    // Recuperar estado dos menus no localstorage
+    const homenagensState = localStorage.getItem('homenagensState') === 'true';
+    setHomenagensExpanded(homenagensState)
+    const funcionariosState = localStorage.getItem('funcionariosState') === 'true';
+    setFuncionariosExpanded(funcionariosState)
+    console.log(homenagensState, funcionariosState)
   }, [])
 
   const toggleTheme = () => {
@@ -50,12 +58,16 @@ export default function LayoutPadrao({ children }: LayoutProps) {
   }
 
   const toggleFuncionarios = () => {
-    setFuncionariosExpanded(!funcionariosExpanded)
-  }
-
+    const newState = !funcionariosExpanded;
+    setFuncionariosExpanded(newState);
+    localStorage.setItem("funcionariosState", String(newState)); // Converte booleano para string
+  };
+  
   const toggleHomenagens = () => {
-    setHomenagensExpanded(!homenagensExpanded)
-  }
+    const newState = !homenagensExpanded;
+    setHomenagensExpanded(newState);
+    localStorage.setItem("homenagensState", String(newState)); // Converte booleano para string
+  };
 
   return (
     <div className="flex h-screen flex-col bg-background text-foreground">

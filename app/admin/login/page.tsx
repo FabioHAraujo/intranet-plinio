@@ -65,7 +65,7 @@ export default function TelaDeLogin() {
       console.log('ID do Usuário:', pb.authStore.model?.id)
 
       // Redireciona o usuário para o dashboard após login bem-sucedido
-      router.push('/dashboard')
+      router.push('/admin/dashboard')
     } catch (error) {
       console.error('Erro ao fazer login:', error)
       form.setError('email', { message: 'E-mail ou senha inválidos.' })
