@@ -7,7 +7,7 @@ import {
   Bot,
   Command,
   Frame,
-  GalleryVerticalEnd,
+  Factory,
   Map,
   PieChart,
   Settings2,
@@ -29,25 +29,15 @@ import {
 // This is sample data.
 const data = {
   user: {
-    name: "shadcn",
-    email: "m@example.com",
+    name: "Fábio",
+    email: "fabio-araujo@flecksteel.com.br",
     avatar: "/avatars/shadcn.jpg",
   },
   teams: [
     {
-      name: "Acme Inc",
-      logo: GalleryVerticalEnd,
-      plan: "Enterprise",
-    },
-    {
-      name: "Acme Corp.",
-      logo: AudioWaveform,
-      plan: "Startup",
-    },
-    {
-      name: "Evil Corp.",
-      logo: Command,
-      plan: "Free",
+      name: "Grupo Plínio Fleck",
+      logo: Factory,
+      plan: "Administração",
     },
   ],
   navMain: [
