@@ -5,7 +5,22 @@ import { fileURLToPath } from 'url';
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   images: {
-    domains: ['hips.hearstapps.com', 'anapincolini.com.br', 'media.istockphoto.com', 'pocketbase.flecksteel.com.br'],
+    remotePatterns: [
+      {
+        hostname: 'hips.hearstapps.com'
+      }
+      ,
+      {
+        hostname: 'anapincolini.com.br'
+      }
+      , 
+      {
+        hostname: 'media.istockphoto.com'
+      }
+      ,{
+        hostname: 'pocketbase.flecksteel.com.br'
+      }
+      ],
   },
   webpack: (config) => {
     config.cache = {
@@ -14,6 +29,7 @@ const nextConfig = {
         config: [path.resolve(fileURLToPath(import.meta.url))],
       },
     };
+    config.stats = 'verbose';
     return config;
   },
 };

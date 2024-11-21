@@ -1,14 +1,14 @@
-'use client'
+'use client';
 
-import { useState } from 'react'
-import { useRouter } from 'next/navigation'
-import { zodResolver } from '@hookform/resolvers/zod'
-import { useForm } from 'react-hook-form'
-import * as z from 'zod'
-import { Eye, EyeOff, Loader2 } from 'lucide-react'
-import PocketBase from 'pocketbase'
+import { useState } from 'react';
+import { useRouter } from 'next/navigation';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { useForm } from 'react-hook-form';
+import * as z from 'zod';
+import { Eye, EyeOff, Loader2 } from 'lucide-react';
+import PocketBase from 'pocketbase';
 
-import { Button } from '@/components/ui/button'
+import { Button } from '@/components/ui/button';
 import {
   Card,
   CardContent,
@@ -16,8 +16,8 @@ import {
   CardFooter,
   CardHeader,
   CardTitle,
-} from '@/components/ui/card'
-import { Input } from '@/components/ui/input'
+} from '@/components/ui/card';
+import { Input } from '@/components/ui/input';
 import {
   Form,
   FormControl,
@@ -25,10 +25,11 @@ import {
   FormItem,
   FormLabel,
   FormMessage,
-} from '@/components/ui/form'
+} from '@/components/ui/form';
 
-const pb = new PocketBase('https://pocketbase.flecksteel.com.br')
+const pb = new PocketBase('https://pocketbase.flecksteel.com.br');
 
+// Validação do formulário com Zod
 const formSchema = z.object({
   email: z.string().email({
     message: 'Por favor, insira um endereço de e-mail válido.',
@@ -36,42 +37,42 @@ const formSchema = z.object({
   password: z.string().min(8, {
     message: 'A senha deve ter pelo menos 8 caracteres.',
   }),
-})
+});
 
 export default function TelaDeLogin() {
-  const [showPassword, setShowPassword] = useState(false)
-  const [isLoading, setIsLoading] = useState(false)
-  const router = useRouter()
+  const [showPassword, setShowPassword] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
+  const router = useRouter();
 
+  // Configuração do react-hook-form com Zod
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
       email: '',
       password: '',
     },
-  })
+  });
 
+  // Submissão do formulário
   async function onSubmit(values: z.infer<typeof formSchema>) {
-    setIsLoading(true)
+    setIsLoading(true);
     try {
-      const authData = await pb.collection('usuarios_intranet').authWithPassword(
+      // Autenticação no PocketBase
+      await pb.collection('usuarios_intranet').authWithPassword(
         values.email,
         values.password
-      )
-      console.log('Login bem-sucedido!', authData)
+      );
 
-      // Armazena o token ou manipula a autenticação conforme necessário
-      console.log('Token:', pb.authStore.token)
-      console.log('ID do Usuário:', pb.authStore.model?.id)
+      // Redirecionar após login bem-sucedido
+      router.push('/admin/dashboard');
+    } catch (error: any) {
+      console.error('Erro ao fazer login:', error);
 
-      // Redireciona o usuário para o dashboard após login bem-sucedido
-      router.push('/admin/dashboard')
-    } catch (error) {
-      console.error('Erro ao fazer login:', error)
-      form.setError('email', { message: 'E-mail ou senha inválidos.' })
-      form.setError('password', { message: 'Por favor, verifique suas credenciais.' })
+      // Mensagem genérica de erro no formulário
+      form.setError('email', { message: 'E-mail ou senha inválidos.' });
+      form.setError('password', { message: 'Por favor, verifique suas credenciais.' });
     } finally {
-      setIsLoading(false)
+      setIsLoading(false);
     }
   }
 
@@ -155,5 +156,5 @@ export default function TelaDeLogin() {
         </CardFooter>
       </Card>
     </div>
-  )
+  );
 }

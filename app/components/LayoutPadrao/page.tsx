@@ -1,7 +1,7 @@
 'use client'
 
 import { useState, useEffect } from 'react'
-import { useRouter } from 'next/navigation'
+import { useRouter, redirect } from 'next/navigation'
 import { Button } from "@/components/ui/button"
 import { 
   House, 
@@ -117,14 +117,14 @@ export default function LayoutPadrao({ children }: LayoutProps) {
               Home
             </button>
             <button
-              onClick={() => router.push('/ramais')}
+              onClick={() => redirect('/ramais')}
               className="flex items-center gap-2 rounded-lg px-3 py-2 text-muted-foreground transition-all hover:text-foreground hover:bg-accent"
             >
               <Phone className="h-4 w-4" />
               Ramais
             </button>
             <button
-              onClick={() => router.push('/cardapio')}
+              onClick={() => redirect('/cardapio')}
               className="flex items-center gap-2 rounded-lg px-3 py-2 text-muted-foreground transition-all hover:text-foreground hover:bg-accent"
             >
               <UtensilsCrossed className="h-4 w-4" />

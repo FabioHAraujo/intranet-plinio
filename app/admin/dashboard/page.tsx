@@ -1,4 +1,6 @@
-import { AppSidebar } from "@/components/app-sidebar"
+import PocketBase from "pocketbase";
+import { redirect } from "next/navigation";
+import { AppSidebar } from "@/components/app-sidebar";
 import {
   Breadcrumb,
   BreadcrumbItem,
@@ -6,16 +8,23 @@ import {
   BreadcrumbList,
   BreadcrumbPage,
   BreadcrumbSeparator,
-} from "@/components/ui/breadcrumb"
-import { Separator } from "@/components/ui/separator"
+} from "@/components/ui/breadcrumb";
+import { Separator } from "@/components/ui/separator";
 import {
   SidebarInset,
   SidebarProvider,
   SidebarTrigger,
-} from "@/components/ui/sidebar"
-import Noticias from "@/app/components/Noticias/page"
+} from "@/components/ui/sidebar";
+import Noticias from "@/app/components/Noticias/page";
+
+const pb = new PocketBase("https://pocketbase.flecksteel.com.br");
 
 export default function Page() {
+  // Verifique se o usuário está autenticado no servidor
+  if (!pb.authStore.isValid) {
+    redirect("/admin/login"); // Redireciona para a página de login
+  }
+
   return (
     <SidebarProvider>
       <AppSidebar />
@@ -27,9 +36,7 @@ export default function Page() {
             <Breadcrumb>
               <BreadcrumbList>
                 <BreadcrumbItem className="hidden md:block">
-                  <BreadcrumbLink href="#">
-                    Building Your Application
-                  </BreadcrumbLink>
+                  <BreadcrumbLink href="#">Building Your Application</BreadcrumbLink>
                 </BreadcrumbItem>
                 <BreadcrumbSeparator className="hidden md:block" />
                 <BreadcrumbItem>
@@ -44,5 +51,5 @@ export default function Page() {
         </div>
       </SidebarInset>
     </SidebarProvider>
-  )
+  );
 }
