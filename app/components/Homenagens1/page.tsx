@@ -1,67 +1,68 @@
-'use client'
+'use client';
 
-import { useEffect, useState, useRef } from "react"
-import { Card } from "@/components/ui/card"
-import { Badge } from "@/components/ui/badge"
-import { Dialog, DialogContent, DialogTrigger } from "@/components/ui/dialog"
-import { ScrollArea } from "@/components/ui/scroll-area"
-import { AspectRatio } from "@/components/ui/aspect-ratio"
-import Image from "next/image"
+import { useEffect, useState, useRef } from 'react';
+import { useSearchParams } from 'next/navigation';
+import { Card } from '@/components/ui/card';
+import { Badge } from '@/components/ui/badge';
+import { Dialog, DialogContent, DialogTrigger } from '@/components/ui/dialog';
+import { ScrollArea } from '@/components/ui/scroll-area';
+import Image from 'next/image';
 
-import Loading from "@/components/personal/Loading/page"
-
-type HomenagensProps = {
-  titulo: string
-  tipo: string
-}
+import Loading from '@/components/personal/Loading/page';
 
 interface Homenagem {
-  id: string
-  nome: string
-  descricao: string
-  thumbnail: string
+  id: string;
+  nome: string;
+  descricao: string;
+  thumbnail: string;
 }
 
-export default function Component({ titulo = "Homenagens", tipo = "default" }: HomenagensProps) {
-  const [homenagens, setHomenagens] = useState<Homenagem[]>([])
-  const [carregado, setCarregado] = useState(false)
-  const [selectedImageIndex, setSelectedImageIndex] = useState<number | null>(null)
-  const scrollRef = useRef<HTMLDivElement>(null)
+export default function Homenagens1() {
+  const searchParams = useSearchParams();
+
+  // Verifique se `searchParams` existe antes de acessar métodos como `get`
+  const titulo = searchParams?.get('titulo') || 'Homenagens';
+  const tipo = searchParams?.get('tipo') || 'default';
+
+  const [homenagens, setHomenagens] = useState<Homenagem[]>([]);
+  const [carregado, setCarregado] = useState(false);
+  const [selectedImageIndex, setSelectedImageIndex] = useState<number | null>(null);
+  const scrollRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await fetch(`/api/${tipo}`)
+        const response = await fetch(`/api/${tipo}`);
         if (!response.ok) {
-          throw new Error("Erro ao buscar dados da API")
+          throw new Error('Erro ao buscar dados da API');
         }
-        const data: Homenagem[] = await response.json()
-        setHomenagens(data)
-        setCarregado(true)
+        const data: Homenagem[] = await response.json();
+        setHomenagens(data);
+        setCarregado(true);
       } catch (error) {
-        console.error("Erro ao buscar dados:", error)
+        console.error('Erro ao buscar dados:', error);
       }
-    }
+    };
 
-    fetchData()
-  }, [tipo])
+    fetchData();
+  }, [tipo]);
 
   useEffect(() => {
     if (selectedImageIndex !== null && scrollRef.current) {
-      const selectedThumb = scrollRef.current.children[selectedImageIndex] as HTMLElement
+      const selectedThumb = scrollRef.current.children[selectedImageIndex] as HTMLElement;
       if (selectedThumb) {
-        selectedThumb.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' })
+        selectedThumb.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' });
       }
     }
-  }, [selectedImageIndex])
+  }, [selectedImageIndex]);
 
   const handleImageClick = (index: number) => {
-    setSelectedImageIndex(index)
-  }
+    setSelectedImageIndex(index);
+  };
 
   const closeDialog = () => {
-    setSelectedImageIndex(null)
-  }
+    setSelectedImageIndex(null);
+  };
 
   return carregado ? (
     <div className="container mx-auto p-6 min-h-screen">
@@ -70,15 +71,15 @@ export default function Component({ titulo = "Homenagens", tipo = "default" }: H
         {homenagens.map((homenagem, index) => (
           <Dialog
             key={homenagem.id}
-            open={selectedImageIndex === index} // Controle manual do estado de abertura
+            open={selectedImageIndex === index}
             onOpenChange={(isOpen) => {
-              if (!isOpen) closeDialog() // Fechar o diálogo se `isOpen` for falso
+              if (!isOpen) closeDialog();
             }}
           >
             <DialogTrigger asChild>
               <Card
                 className="overflow-hidden cursor-pointer"
-                onClick={() => handleImageClick(index)} // Abre o diálogo
+                onClick={() => handleImageClick(index)}
               >
                 <div className="relative aspect-[4/3] group">
                   <Image
@@ -103,28 +104,26 @@ export default function Component({ titulo = "Homenagens", tipo = "default" }: H
                 className="p-4 flex flex-col items-center justify-between max-h-[90vh]"
                 style={{ width: 'fit-content', maxWidth: 'calc(100% - 20px)' }}
               >
-                {/* Imagem Principal */}
                 <div className="relative max-w-full max-h-[75vh] flex items-start overflow-hidden">
                   <Image
-                    src={homenagens[selectedImageIndex].thumbnail}
-                    alt={homenagens[selectedImageIndex].nome}
+                    src={homenagem.thumbnail}
+                    alt={homenagem.nome}
                     width={0}
                     height={0}
                     sizes="100vw"
                     className="w-auto h-full object-cover rounded-md"
-                    style={{ objectPosition: 'top' }} // Foca no topo da imagem
+                    style={{ objectPosition: 'top' }}
                   />
                 </div>
-
-                {/* Thumbnails */}
                 <div className="w-full mt-4">
                   <ScrollArea className="h-24 w-full">
                     <div className="flex items-center space-x-4 h-full overflow-x-auto overflow-y-hidden">
                       {homenagens.map((homenagem, idx) => (
                         <div
                           key={homenagem.id}
-                          className={`w-20 h-20 flex-shrink-0 cursor-pointer rounded-md ${idx === selectedImageIndex ? 'ring-2 ring-primary scale-105' : 'opacity-70 hover:opacity-100'
-                            }`}
+                          className={`w-20 h-20 flex-shrink-0 cursor-pointer rounded-md ${
+                            idx === selectedImageIndex ? 'ring-2 ring-primary scale-105' : 'opacity-70 hover:opacity-100'
+                          }`}
                           onClick={() => handleImageClick(idx)}
                         >
                           <Image
@@ -133,7 +132,7 @@ export default function Component({ titulo = "Homenagens", tipo = "default" }: H
                             width={80}
                             height={80}
                             className="object-cover w-full h-full rounded-md"
-                            style={{ objectPosition: 'top' }} // Foca no topo da imagem
+                            style={{ objectPosition: 'top' }}
                           />
                         </div>
                       ))}
@@ -148,5 +147,5 @@ export default function Component({ titulo = "Homenagens", tipo = "default" }: H
     </div>
   ) : (
     <Loading />
-  )
+  );
 }

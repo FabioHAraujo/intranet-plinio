@@ -1,4 +1,4 @@
-'use client'
+'use client';
 
 import { FC, useState } from "react";
 import { Badge } from "@/components/ui/badge";
@@ -12,6 +12,7 @@ import {
   DialogTitle,
   DialogDescription,
 } from "@/components/ui/dialog";
+import Image from "next/image";
 
 interface HomenagemCardProps {
   image: string;
@@ -31,10 +32,12 @@ const HomenagemCard: FC<HomenagemCardProps> = ({ image, name, subtitle, badgeTex
         className="relative w-full h-72 overflow-hidden rounded-lg shadow-lg cursor-pointer"
       >
         {/* Imagem de Fundo */}
-        <img
+        <Image
           src={image}
           alt={name}
-          className="w-full h-full object-cover object-center"
+          fill
+          className="object-cover object-center"
+          sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
         />
 
         {/* Sobreposição com degradê */}
@@ -42,7 +45,7 @@ const HomenagemCard: FC<HomenagemCardProps> = ({ image, name, subtitle, badgeTex
 
         {/* Conteúdo da Homenagem */}
         <div className="absolute bottom-4 left-4 right-4 text-white space-y-2">
-          <Badge variant="primary">{badgeText}</Badge>
+          <Badge>{badgeText}</Badge>
           <h2 className="text-xl font-semibold">{name}</h2>
           <p className="text-sm text-gray-200">{subtitle}</p>
         </div>
@@ -56,10 +59,21 @@ const HomenagemCard: FC<HomenagemCardProps> = ({ image, name, subtitle, badgeTex
             <DialogTitle>{name}</DialogTitle>
             <DialogDescription>{subtitle}</DialogDescription>
           </DialogHeader>
-          <img src={image} alt={name} className="w-full h-full object-contain mt-4" />
+          <div className="relative w-full h-96">
+            <Image
+              src={image}
+              alt={name}
+              fill
+              className="object-contain"
+              sizes="(max-width: 768px) 100vw, (max-width: 1200px) 80vw, 70vw"
+            />
+          </div>
           <DialogFooter>
             <DialogClose asChild>
-              <button onClick={() => setIsOpen(false)} className="mt-4 px-4 py-2 bg-blue-500 text-white rounded-lg">
+              <button
+                onClick={() => setIsOpen(false)}
+                className="mt-4 px-4 py-2 bg-blue-500 text-white rounded-lg"
+              >
                 Fechar
               </button>
             </DialogClose>

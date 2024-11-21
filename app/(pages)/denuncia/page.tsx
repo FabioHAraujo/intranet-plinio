@@ -4,9 +4,7 @@ import { useRouter } from 'next/navigation';
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardHeader, CardTitle, CardDescription, CardContent, CardFooter } from "@/components/ui/card";
-import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
 import { AlertCircle } from 'lucide-react';
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
@@ -14,7 +12,6 @@ import { Separator } from '@/components/ui/separator';
 
 export default function AbuseReportForm() {
     const [isSubmitted, setIsSubmitted] = useState(false);
-    const [setor, setSetor] = useState('');  // Estado para capturar o setor selecionado
     const router = useRouter();
   
     const handleSubmit = async (event: React.FormEvent) => {

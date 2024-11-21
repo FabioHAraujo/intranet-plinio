@@ -39,6 +39,13 @@ const formSchema = z.object({
   }),
 });
 
+// Tipo específico para o erro do PocketBase
+interface PocketBaseError {
+  message: string;
+  code?: number;
+  data?: Record<string, unknown>;
+}
+
 export default function TelaDeLogin() {
   const [showPassword, setShowPassword] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
@@ -65,11 +72,11 @@ export default function TelaDeLogin() {
 
       // Redirecionar após login bem-sucedido
       router.push('/admin/dashboard');
-    } catch (error: any) {
-      console.error('Erro ao fazer login:', error);
+    } catch (error) {
+      const pbError = error as PocketBaseError;
 
       // Mensagem genérica de erro no formulário
-      form.setError('email', { message: 'E-mail ou senha inválidos.' });
+      form.setError('email', { message: pbError?.message || 'E-mail ou senha inválidos.' });
       form.setError('password', { message: 'Por favor, verifique suas credenciais.' });
     } finally {
       setIsLoading(false);

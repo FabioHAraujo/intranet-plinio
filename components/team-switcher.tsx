@@ -16,7 +16,7 @@ import {
   SidebarMenuItem,
   useSidebar,
 } from "@/components/ui/sidebar"
-import { CaretSortIcon, PlusIcon } from "@radix-ui/react-icons"
+import { CaretSortIcon } from "@radix-ui/react-icons"
 
 export function TeamSwitcher({
   teams,

@@ -1,7 +1,7 @@
 'use client'
 
 import { useState, useEffect } from 'react'
-import { useRouter, redirect } from 'next/navigation'
+import { useRouter } from 'next/navigation'
 import { Button } from "@/components/ui/button"
 import { 
   House, 
@@ -37,18 +37,20 @@ export default function LayoutPadrao({ children }: LayoutProps) {
   const router = useRouter()
 
   useEffect(() => {
+    if (typeof window === 'undefined') return;
+  
     // Recuperar tema no localstorage
-    const savedTheme = localStorage.getItem('theme') || 'light'
-    setTheme(savedTheme)
-    document.documentElement.classList.toggle('dark', savedTheme === 'dark')
-
+    const savedTheme = localStorage.getItem('theme') || 'light';
+    setTheme(savedTheme);
+    document.documentElement.classList.toggle('dark', savedTheme === 'dark');
+  
     // Recuperar estado dos menus no localstorage
     const homenagensState = localStorage.getItem('homenagensState') === 'true';
-    setHomenagensExpanded(homenagensState)
+    setHomenagensExpanded(homenagensState);
     const funcionariosState = localStorage.getItem('funcionariosState') === 'true';
-    setFuncionariosExpanded(funcionariosState)
-    console.log(homenagensState, funcionariosState)
-  }, [])
+    setFuncionariosExpanded(funcionariosState);
+  }, []);
+  
 
   const toggleTheme = () => {
     const newTheme = theme === 'light' ? 'dark' : 'light'
@@ -117,14 +119,14 @@ export default function LayoutPadrao({ children }: LayoutProps) {
               Home
             </button>
             <button
-              onClick={() => redirect('/ramais')}
+              onClick={() => router.push('/ramais')}
               className="flex items-center gap-2 rounded-lg px-3 py-2 text-muted-foreground transition-all hover:text-foreground hover:bg-accent"
             >
               <Phone className="h-4 w-4" />
               Ramais
             </button>
             <button
-              onClick={() => redirect('/cardapio')}
+              onClick={() => router.push('/cardapio')}
               className="flex items-center gap-2 rounded-lg px-3 py-2 text-muted-foreground transition-all hover:text-foreground hover:bg-accent"
             >
               <UtensilsCrossed className="h-4 w-4" />
@@ -164,7 +166,9 @@ export default function LayoutPadrao({ children }: LayoutProps) {
                   >
                     <Separator />
                     <button
-                      onClick={() => router.push('/anos-conosco')}
+                      onClick={() =>
+                        router.push('/anos-conosco?titulo=Anos%20Conosco&tipo=anos_conosco')
+                      }
                       className="rounded-lg px-3 py-2 text-muted-foreground transition-all hover:text-foreground hover:bg-accent"
                     >
                       <div className='flex items-center gap-2'>
@@ -173,7 +177,7 @@ export default function LayoutPadrao({ children }: LayoutProps) {
                       </div>
                     </button>
                     <button
-                      onClick={() => router.push('/formandos')}
+                      onClick={() => router.push('/formandos?titulo=Nossos%20Formandos&tipo=formandos')}
                       className="rounded-lg px-3 py-2 text-muted-foreground transition-all hover:text-foreground hover:bg-accent"
                     >
                       <div className='flex items-center gap-2'>

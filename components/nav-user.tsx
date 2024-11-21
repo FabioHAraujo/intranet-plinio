@@ -4,7 +4,6 @@ import {
   BadgeCheck,
   Bell,
   LogOut,
-  Sparkles,
 } from "lucide-react"
 
 import {
