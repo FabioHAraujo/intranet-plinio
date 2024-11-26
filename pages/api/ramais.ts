@@ -1,5 +1,5 @@
 import type { NextApiRequest, NextApiResponse } from 'next';
-import { FetchRamais } from '../functions/busca';
+import { FetchRamais } from '@/lib/functions/busca';
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
   try {

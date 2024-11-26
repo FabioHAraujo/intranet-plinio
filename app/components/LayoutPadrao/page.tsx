@@ -166,9 +166,7 @@ export default function LayoutPadrao({ children }: LayoutProps) {
                   >
                     <Separator />
                     <button
-                      onClick={() =>
-                        router.push('/anos-conosco?titulo=Anos%20Conosco&tipo=anos_conosco')
-                      }
+                      onClick={() => router.push('/anos-conosco')}
                       className="rounded-lg px-3 py-2 text-muted-foreground transition-all hover:text-foreground hover:bg-accent"
                     >
                       <div className='flex items-center gap-2'>
@@ -177,7 +175,7 @@ export default function LayoutPadrao({ children }: LayoutProps) {
                       </div>
                     </button>
                     <button
-                      onClick={() => router.push('/formandos?titulo=Nossos%20Formandos&tipo=formandos')}
+                      onClick={() => router.push('/formandos')}
                       className="rounded-lg px-3 py-2 text-muted-foreground transition-all hover:text-foreground hover:bg-accent"
                     >
                       <div className='flex items-center gap-2'>
