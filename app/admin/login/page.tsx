@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm } from 'react-hook-form';
@@ -31,37 +31,28 @@ const pb = new PocketBase('https://pocketbase.flecksteel.com.br');
 
 // Validação do formulário com Zod
 const formSchema = z.object({
-  email: z.string().email({
-    message: 'Por favor, insira um endereço de e-mail válido.',
-  }),
-  password: z.string().min(8, {
-    message: 'A senha deve ter pelo menos 8 caracteres.',
-  }),
+  email: z.string().email({ message: 'Por favor, insira um e-mail válido.' }),
+  password: z.string().min(8, { message: 'A senha deve ter pelo menos 8 caracteres.' }),
 });
-
-// Tipo específico para o erro do PocketBase
-interface PocketBaseError {
-  message: string;
-  code?: number;
-  data?: Record<string, unknown>;
-}
 
 export default function TelaDeLogin() {
   const [showPassword, setShowPassword] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const router = useRouter();
 
-  // Configuração do react-hook-form com Zod
+  useEffect(() => {
+    // Verifica se o usuário já está logado
+    if (pb.authStore.isValid) {
+      router.push('/admin/dashboard'); // Redireciona se o usuário já está autenticado
+    }
+  }, [router]);
+
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
-    defaultValues: {
-      email: '',
-      password: '',
-    },
+    defaultValues: { email: '', password: '' },
   });
 
-  // Submissão do formulário
-  async function onSubmit(values: z.infer<typeof formSchema>) {
+  const onSubmit = async (values: z.infer<typeof formSchema>) => {
     setIsLoading(true);
     try {
       // Autenticação no PocketBase
@@ -70,18 +61,18 @@ export default function TelaDeLogin() {
         values.password
       );
 
-      // Redirecionar após login bem-sucedido
+      console.log('Usuário autenticado:', pb.authStore.model);
+
+      // Redirecionar para o Dashboard
       router.push('/admin/dashboard');
     } catch (error) {
-      const pbError = error as PocketBaseError;
-
-      // Mensagem genérica de erro no formulário
-      form.setError('email', { message: pbError?.message || 'E-mail ou senha inválidos.' });
+      const message = (error as Error)?.message || 'E-mail ou senha inválidos.';
+      form.setError('email', { message });
       form.setError('password', { message: 'Por favor, verifique suas credenciais.' });
     } finally {
       setIsLoading(false);
     }
-  }
+  };
 
   return (
     <div className="flex items-center justify-center min-h-screen bg-gray-100 dark:bg-gray-900">
@@ -126,16 +117,9 @@ export default function TelaDeLogin() {
                           variant="ghost"
                           size="icon"
                           className="absolute right-0 top-0 h-full px-3 py-2 hover:bg-transparent"
-                          onClick={() => setShowPassword(!showPassword)}
+                          onClick={() => setShowPassword((prev) => !prev)}
                         >
-                          {showPassword ? (
-                            <EyeOff className="h-4 w-4" />
-                          ) : (
-                            <Eye className="h-4 w-4" />
-                          )}
-                          <span className="sr-only">
-                            {showPassword ? 'Ocultar senha' : 'Mostrar senha'}
-                          </span>
+                          {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
                         </Button>
                       </div>
                     </FormControl>

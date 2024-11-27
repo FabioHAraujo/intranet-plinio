@@ -1,150 +1,109 @@
-"use client"
+"use client";
 
-import * as React from "react"
-import {
-  BookOpen,
-  Bot,
-  Frame,
-  Factory,
-  Map,
-  PieChart,
-  Settings2,
-  SquareTerminal,
-} from "lucide-react"
+import React, { useEffect, useState } from "react";
+import { PlusCircle, Edit3 } from "lucide-react";
 
-import { NavMain } from "@/components/nav-main"
-import { NavProjects } from "@/components/nav-projects"
-import { NavUser } from "@/components/nav-user"
-import { TeamSwitcher } from "@/components/team-switcher"
+import { NavMain } from "@/components/nav-main";
+import { NavUser } from "@/components/nav-user";
+import { TeamSwitcher } from "@/components/team-switcher";
 import {
   Sidebar,
   SidebarContent,
   SidebarFooter,
   SidebarHeader,
   SidebarRail,
-} from "@/components/ui/sidebar"
+} from "@/components/ui/sidebar";
+import PocketBase from "pocketbase";
 
-// This is sample data.
+// Configuração do PocketBase
+const pb = new PocketBase("https://pocketbase.flecksteel.com.br");
+
+// Dados ajustados para a sidebar
 const data = {
-  user: {
-    name: "Fábio",
-    email: "fabio-araujo@flecksteel.com.br",
-    avatar: "/avatars/shadcn.jpg",
-  },
   teams: [
     {
       name: "Grupo Plínio Fleck",
-      logo: Factory,
+      logo: Edit3,
       plan: "Administração",
     },
   ],
   navMain: [
     {
-      title: "Playground",
+      title: "Editar",
       url: "#",
-      icon: SquareTerminal,
-      isActive: true,
+      icon: Edit3,
       items: [
         {
-          title: "History",
-          url: "#",
+          title: "Ramais",
+          url: "/admin/dashboard/editar-ramais",
         },
         {
-          title: "Starred",
-          url: "#",
+          title: "3x4 Funcionários",
+          url: "/editar/3x4-funcionarios",
         },
         {
-          title: "Settings",
-          url: "#",
+          title: "Cardápio",
+          url: "/admin/dashboard/add-cardapio",
         },
       ],
     },
     {
-      title: "Models",
+      title: "Adicionar",
       url: "#",
-      icon: Bot,
+      icon: PlusCircle,
       items: [
         {
-          title: "Genesis",
-          url: "#",
+          title: "Cardápio",
+          url: "/admin/dashboard/add-cardapio",
         },
         {
-          title: "Explorer",
-          url: "#",
-        },
-        {
-          title: "Quantum",
-          url: "#",
-        },
-      ],
-    },
-    {
-      title: "Documentation",
-      url: "#",
-      icon: BookOpen,
-      items: [
-        {
-          title: "Introduction",
-          url: "#",
-        },
-        {
-          title: "Get Started",
-          url: "#",
-        },
-        {
-          title: "Tutorials",
-          url: "#",
-        },
-        {
-          title: "Changelog",
-          url: "#",
-        },
-      ],
-    },
-    {
-      title: "Settings",
-      url: "#",
-      icon: Settings2,
-      items: [
-        {
-          title: "General",
-          url: "#",
-        },
-        {
-          title: "Team",
-          url: "#",
-        },
-        {
-          title: "Billing",
-          url: "#",
-        },
-        {
-          title: "Limits",
-          url: "#",
+          title: "Notícia",
+          url: "/adicionar/noticia",
         },
       ],
     },
   ],
-  projects: [
-    {
-      name: "Design Engineering",
-      url: "#",
-      icon: Frame,
-    },
-    {
-      name: "Sales & Marketing",
-      url: "#",
-      icon: PieChart,
-    },
-    {
-      name: "Travel",
-      url: "#",
-      icon: Map,
-    },
-  ],
-}
+};
 
 export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
+  const [user, setUser] = useState<{
+    name: string;
+    email: string;
+    avatar: string;
+  } | null>(null);
+
+  // Busca os dados do usuário autenticado
+  useEffect(() => {
+    const fetchUser = async () => {
+      try {
+        if (!pb.authStore.isValid) {
+          console.error("Usuário não autenticado.");
+          return;
+        }
+
+        // Buscar o registro do usuário autenticado
+        const record = await pb
+          .collection("usuarios_intranet")
+          .getFirstListItem(`id="${pb.authStore.model?.id}"`, {
+            fields: "username,email,avatar",
+          });
+
+        // Atualizar o estado do usuário
+        setUser({
+          name: record.username,
+          email: record.email,
+          avatar: record.avatar
+            ? `${pb.baseUrl}/api/files/${record.collectionId}/${record.id}/${record.avatar}`
+            : "/default-avatar.png", // Avatar padrão caso não tenha
+        });
+      } catch (error) {
+        console.error("Erro ao buscar os dados do usuário:", error);
+      }
+    };
+
+    fetchUser();
+  }, []);
+
   return (
     <Sidebar collapsible="icon" {...props}>
       <SidebarHeader>
@@ -152,12 +111,15 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
       </SidebarHeader>
       <SidebarContent>
         <NavMain items={data.navMain} />
-        <NavProjects projects={data.projects} />
       </SidebarContent>
       <SidebarFooter>
-        <NavUser user={data.user} />
+        {user ? (
+          <NavUser user={{ name: user.name, email: user.email, avatar: user.avatar }} />
+        ) : (
+          <p className="text-sm text-gray-500">Carregando usuário...</p>
+        )}
       </SidebarFooter>
       <SidebarRail />
     </Sidebar>
-  )
+  );
 }
