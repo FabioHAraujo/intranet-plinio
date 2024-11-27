@@ -35,8 +35,13 @@ export default function CadastrarCardapio() {
     try {
       setIsSubmitting(true);
 
+      // Ajusta a data para incluir o horário fixo de 12:00
+      const adjustedDate = new Date(selectedDate);
+      adjustedDate.setHours(12, 0, 0, 0); // Define 12:00 (meio-dia)
+
+      // Envia para o PocketBase
       await pb.collection('cardapios').create({
-        date: format(selectedDate, 'yyyy-MM-dd'),
+        date: adjustedDate.toISOString(), // Envia a data com o horário ajustado
         main: normalText,
         special: specialText,
       });

@@ -39,7 +39,15 @@ const data = {
         },
         {
           title: "3x4 Funcionários",
-          url: "/editar/3x4-funcionarios",
+          url: "/admin/dashboard/3x4-funcionarios",
+        },
+        {
+          title: "Tempo de Empresa",
+          url: "/admin/dashboard/editar-anos-conosco",
+        },
+        {
+          title: "Formandos",
+          url: "/admin/dashboard/editar-formandos",
         },
         {
           title: "Cardápio",
@@ -58,7 +66,15 @@ const data = {
         },
         {
           title: "Notícia",
-          url: "/adicionar/noticia",
+          url: "/admin/dashboard/add-noticia",
+        },
+        {
+          title: "Tempo de Empresa",
+          url: "/admin/dashboard/add-anos-conosco",
+        },
+        {
+          title: "Formandos",
+          url: "/admin/dashboard/add-formandos",
         },
       ],
     },
