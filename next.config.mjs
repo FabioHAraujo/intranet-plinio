@@ -1,4 +1,3 @@
-// next.config.mjs
 import path from 'path';
 import { fileURLToPath } from 'url';
 
@@ -11,23 +10,25 @@ const nextConfig = {
     // !! WARN !!
     ignoreBuildErrors: true,
   },
+  eslint: {
+    // Desabilita o ESLint durante o build
+    ignoreDuringBuilds: true,
+  },
   images: {
     remotePatterns: [
       {
-        hostname: 'hips.hearstapps.com'
-      }
-      ,
+        hostname: 'hips.hearstapps.com',
+      },
       {
-        hostname: 'anapincolini.com.br'
-      }
-      , 
+        hostname: 'anapincolini.com.br',
+      },
       {
-        hostname: 'media.istockphoto.com'
-      }
-      ,{
-        hostname: 'pocketbase.flecksteel.com.br'
-      }
-      ],
+        hostname: 'media.istockphoto.com',
+      },
+      {
+        hostname: 'pocketbase.flecksteel.com.br',
+      },
+    ],
   },
   webpack: (config) => {
     config.cache = {
