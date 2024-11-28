@@ -51,7 +51,7 @@ const data = {
         },
         {
           title: "Cardápio",
-          url: "/admin/dashboard/add-cardapio",
+          url: "/admin/dashboard/editar-cardapio",
         },
       ],
     },
