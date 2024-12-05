@@ -28,23 +28,18 @@ const carouselData = [
   },
   {
     id: 2,
-    title: "Empresa de Tecnologia Lança Dispositivo de Realidade Aumentada",
-    description: "O novo gadget promete transformar a maneira como interagimos com o mundo digital, mesclando perfeitamente realidade e virtualidade.",
+    title: "Inauguração da Nova Área de Lazer Nayr Anna Fleck",
+    description: "Celebramos a inauguração da nova Área de Lazer Nayr Anna Fleck, um espaço projetado para promover momentos de descontração e convivência entre os colaboradores. O local recebe o nome em homenagem à Nayr Anna Fleck, esposa do fundador do Grupo Plínio Fleck, reconhecida por seu legado de apoio e dedicação. Aproveite para conhecer e desfrutar deste ambiente pensado com carinho para todos nós!",
     imageUrl: img2
   },
   {
     id: 3,
-    title: "Acordo Climático Global Alcança Marco Histórico",
-    description: "Líderes mundiais chegam a um consenso sobre medidas drásticas para combater as mudanças climáticas, estabelecendo metas ambiciosas para as próximas décadas.",
+    title: "Inauguração do Novo Auditório Plínio Fleck",
+    description: "Com grande entusiasmo, anunciamos a inauguração do novo Auditório Plínio Fleck, uma homenagem ao fundador do Grupo, Sr. Plínio Fleck. Este espaço foi cuidadosamente projetado para oferecer conforto e tecnologia audiovisual, sendo ideal para reuniões, eventos e treinamentos que fortalecem a nossa trajetória de sucesso. Venha conhecer e fazer parte deste marco em nossa história!",
     imageUrl: img3
-  },
-  {
-    id: 4,
-    title: "Titulo final",
-    description: "Exorcizamus te, omnis immundus spiritus, omnis satanica potestas, omnis incursio infernalis adversarii, omnis legio, omnis congregatio et secta diabolica... Ergo, draco maledicte et omnis legio diabolica, adjuramus te ... cessa decipere humanas creaturas, eisque æternæ perditionìs venenum propinare... Vade, satana, inventor et magister omnis fallaciæ, hostis humanæ salutis... Humiliare sub potenti manu Dei; contremisce et effuge, invocato a nobis sancto et terribili nomine... quem inferi tremunt... Ab insidiis diaboli, libera nos, Domine. Ut Ecclesiam tuam secura tibi facias libertate servire, te rogamus, audi nos.",
-    imageUrl: img6
   }
-]
+];
+
 
 export default function Home() {
   const [currentSlide, setCurrentSlide] = useState(0)
