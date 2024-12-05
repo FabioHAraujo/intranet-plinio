@@ -77,11 +77,11 @@ export default function Cardapio() {
                   <div className="space-y-2">
                     <p className="font-semibold">Almoço Normal:</p>
                     {/* Formata texto do almoço normal */}
-                    <div className="whitespace-pre-wrap">{formatText(day.main)}</div>
+                    <div className="whitespace-pre-wrap text-sm">{formatText(day.main)}</div>
                     <Separator className="my-4" />
                     <p className="font-semibold text-primary">Almoço Especial:</p>
                     {/* Formata texto do almoço especial */}
-                    <div className="whitespace-pre-wrap">{formatText(day.special)}</div>
+                    <div className="whitespace-pre-wrap text-sm">{formatText(day.special)}</div>
                   </div>
                 </CardContent>
               </Card>

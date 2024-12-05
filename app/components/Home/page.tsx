@@ -15,7 +15,7 @@ import { X } from "lucide-react"
 import img1 from '@/assets/imagem1.jpg'
 import img2 from '@/assets/imagem2.jpg'
 import img3 from '@/assets/imagem3.jpg'
-import img6 from '@/assets/imagem6.png'
+import natal from '@/assets/natal.jpeg'
 
 import Cardapio from '../Cardapio/page'
 
@@ -37,8 +37,15 @@ const carouselData = [
     title: "Inauguração do Novo Auditório Plínio Fleck",
     description: "Com grande entusiasmo, anunciamos a inauguração do novo Auditório Plínio Fleck, uma homenagem ao fundador do Grupo, Sr. Plínio Fleck. Este espaço foi cuidadosamente projetado para oferecer conforto e tecnologia audiovisual, sendo ideal para reuniões, eventos e treinamentos que fortalecem a nossa trajetória de sucesso. Venha conhecer e fazer parte deste marco em nossa história!",
     imageUrl: img3
+  },
+  {
+    id: 4,
+    title: "Feliz Natal e Próspero Ano Novo!",
+    description: "Agradecemos a todos os colaboradores que estiveram conosco ao longo deste ano, contribuindo para o nosso crescimento e sucesso. Desejamos que este Natal seja repleto de alegria, amor e união, e que o ano novo traga novas oportunidades e realizações para todos. Que 2024 seja ainda mais próspero e cheio de conquistas. Boas festas e um feliz ano novo!",
+    imageUrl: natal
   }
 ];
+
 
 
 export default function Home() {
@@ -67,7 +74,7 @@ export default function Home() {
                 <div className="bg-red-500 w-2"></div> {/* Vermelho */}
                 <div className="bg-gray-400 w-2"></div> {/* Vermelho */}
               </div>
-              <div className="w-2/4 p-6 ml-4 min-h-full flex flex-col justify-between"> {/* Adiciona `min-h-full` para garantir altura mínima */}
+              <div className="w-2/4 p-6 ml-4 min-h-full! flex flex-col justify-between"> {/* Adiciona `min-h-full` para garantir altura mínima */}
                 <h2 className="text-3xl font-bold mb-4">{slide.title}</h2>
                 <p className="text-lg text-justify flex-grow">{slide.description}</p> {/* `flex-grow` faz o texto expandir */}
               </div>
