@@ -55,7 +55,8 @@ export default function Aniversariantes() {
   }
 
   const aniversariosPorMesEDia = aniversarios.reduce((acc, aniversario) => {
-    const mesAniversario = new Date(`2023-${aniversario.MES_ANIVERSARIO}-${aniversario.DIA_ANIVERSARIO}`).toLocaleString('default', { month: 'long' });
+    const mesAniversario = new Date(2023, Number(aniversario.MES_ANIVERSARIO) - 1, Number(aniversario.DIA_ANIVERSARIO))
+  .toLocaleString('default', { month: 'long' });
     const diaAniversario = Number(aniversario.DIA_ANIVERSARIO);
 
     if (!acc[mesAniversario]) {
