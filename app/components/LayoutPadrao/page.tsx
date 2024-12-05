@@ -17,7 +17,8 @@ import {
   Cake, 
   GraduationCap, 
   // Newspaper, 
-  CalendarHeart 
+  CalendarHeart, 
+  FileSearch
 } from "lucide-react"
 import Image from "next/image"
 import { Separator } from '@/components/ui/separator'
@@ -202,6 +203,13 @@ export default function LayoutPadrao({ children }: LayoutProps) {
                 >
                   <ChevronRight className="h-4 w-4" />
                 </motion.div>
+              </button>
+              <button
+                onClick={() => window.location.href = 'http://192.168.0.103/drupal/procedimentos.php'}
+                className="flex items-center gap-2 rounded-lg px-3 py-2 text-muted-foreground transition-all hover:text-foreground hover:bg-accent"
+              >
+                <FileSearch className="h-4 w-4" />
+                Manuais e Procedimentos
               </button>
               <AnimatePresence>
                 {funcionariosExpanded && (
