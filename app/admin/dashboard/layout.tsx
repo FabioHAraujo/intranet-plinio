@@ -22,10 +22,16 @@ export default function AdminLayout({
 
   useEffect(() => {
     const checkAuth = async () => {
-      if (!pb.authStore.isValid) {
-        router.push("/admin/login");
-      } else {
+      try {
+        if (!pb.authStore.isValid) {
+          // Tenta validar a sessão
+          await pb.collection("users").authRefresh();
+        }
         setIsLoading(false);
+      } catch (error) {
+        console.error("Sessão inválida ou expirada. Redirecionando para login.");
+        pb.authStore.clear(); // Limpa a sessão
+        router.push("/admin/login");
       }
     };
 
