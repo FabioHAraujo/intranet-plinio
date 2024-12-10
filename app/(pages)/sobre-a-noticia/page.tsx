@@ -1,7 +1,11 @@
-import SobreNoticia from '@/app/components/SobreNoticia/page'
+import React, { Suspense } from "react";
+
+const SobreNoticia = React.lazy(() => import("@/app/components/SobreNoticia/page"));
 
 export default function NoticiasPage() {
   return (
-    <SobreNoticia />
-  )
+    <Suspense fallback={<p>Carregando notícia...</p>}>
+      <SobreNoticia />
+    </Suspense>
+  );
 }
