@@ -18,7 +18,7 @@ interface Homenagem {
 
 export default function AnosConosco() {
   const tipo = 'tempo_de_empresa'; // Parâmetro fixo para esta página
-  const titulo = 'Anos Conosco'; // Título fixo para esta página
+  const titulo = 'Tempo de Casa'; // Título fixo para esta página
 
   const [homenagens, setHomenagens] = useState<Homenagem[]>([]);
   const [carregado, setCarregado] = useState(false);

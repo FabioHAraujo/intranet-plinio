@@ -34,7 +34,6 @@ async function fetchTempoEmpresa(): Promise<Formandos[]> {
       descricao: record.descricao,
       thumbnail: record.thumbnail ? `https://pocketbase.flecksteel.com.br/api/files/formandos/${record.id}/${record.thumbnail}` : '',
     }));
-    console.log("RETORNO PARA DEBUG:", result);
 
     return result;
   } catch (error) {

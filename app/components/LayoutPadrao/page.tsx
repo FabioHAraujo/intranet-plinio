@@ -16,7 +16,7 @@ import {
   ChevronRight, 
   Cake, 
   GraduationCap, 
-  // Newspaper, 
+  Newspaper, 
   CalendarHeart, 
   FileSearch
 } from "lucide-react"
@@ -133,13 +133,13 @@ export default function LayoutPadrao({ children }: LayoutProps) {
               <UtensilsCrossed className="h-4 w-4" />
               Cardápio
             </button>
-            {/* <button
+            <button
               onClick={() => router.push('/noticias')}
               className="flex items-center gap-2 rounded-lg px-3 py-2 text-muted-foreground transition-all hover:text-foreground hover:bg-accent"
             >
               <Newspaper className="h-4 w-4" />
               Notícias
-            </button> */}
+            </button>
             <div className="flex flex-col">
               <button
                 onClick={toggleHomenagens}
@@ -172,7 +172,7 @@ export default function LayoutPadrao({ children }: LayoutProps) {
                     >
                       <div className='flex items-center gap-2'>
                         <UsersRound className="h-4 w-4" />
-                        Anos Conosco
+                        Tempo de Casa
                       </div>
                     </button>
                     <button

@@ -53,6 +53,10 @@ const data = {
           title: "Cardápio",
           url: "/admin/dashboard/editar-cardapio",
         },
+        {
+          title: "Editar Notícias",
+          url: "/admin/dashboard/editar-noticias",
+        },
       ],
     },
     {
