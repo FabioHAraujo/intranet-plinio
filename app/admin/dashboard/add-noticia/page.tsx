@@ -5,6 +5,9 @@ import { useEditor, EditorContent } from '@tiptap/react';
 import StarterKit from '@tiptap/starter-kit';
 import Underline from '@tiptap/extension-underline';
 import Toolbar from './Toolbar';
+import PocketBase from 'pocketbase';
+
+const pb = new PocketBase('https://pocketbase.flecksteel.com.br');
 
 const Editor = () => {
   const [title, setTitle] = useState('');
@@ -14,7 +17,42 @@ const Editor = () => {
   const [banner, setBanner] = useState<File | null>(null);
   const [loading, setLoading] = useState(false);
 
-  const availableTags = ['Política', 'Economia', 'Brasil', 'Crise Financeira'];
+  const availableTags = [
+    'Anúncios',
+    'Eventos Internos',
+    'Treinamentos',
+    'Novos Colaboradores',
+    'Reconhecimentos',
+    'Resultados Financeiros',
+    'Datas Comemorativas',
+    'Natal',
+    'Ano Novo',
+    'Festas de Fim de Ano',
+    'Campanhas Internas',
+    'RH',
+    'Políticas Internas',
+    'Benefícios',
+    'Saúde e Bem-Estar',
+    'Segurança do Trabalho',
+    'Inovações',
+    'Projetos Internos',
+    'Promoções de Colaboradores',
+    'Metas',
+    'Conquistas da Empresa',
+    'Parcerias',
+    'Sustentabilidade',
+    'Engajamento',
+    'Destaques do Mês',
+    'Mudanças Estruturais',
+    'Feedbacks e Pesquisas',
+    'Comemorações',
+    'Lançamentos de Produtos',
+    'Ações Sociais',
+    'Diversidade e Inclusão',
+    'Treinamentos e Cursos',
+    'Equipe em Destaque',
+    'Boletim Informativo'
+  ];
 
   const editor = useEditor({
     extensions: [StarterKit, Underline],
@@ -53,7 +91,18 @@ const Editor = () => {
     setLoading(true);
 
     try {
-      // Aqui você processaria o envio, caso necessário
+      const formData = new FormData();
+      formData.append('titulo', title);
+      formData.append('texto', content);
+      formData.append('tags', JSON.stringify({ tags }));
+
+      if (banner) {
+        formData.append('banner', banner);
+      }
+
+      const response = await pb.collection('noticias').create(formData);
+      console.log('Notícia criada:', response);
+
       alert('Notícia criada com sucesso!');
       setTitle('');
       setTags([]);
