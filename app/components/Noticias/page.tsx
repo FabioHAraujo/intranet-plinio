@@ -26,7 +26,7 @@ export default function Noticias() {
     try {
       const response = await fetch("https://pocketbase.flecksteel.com.br/api/collections/noticias/records");
       const data = await response.json();
-
+  
       const mappedNoticias = data.items.map((item: any) => ({
         id: item.id,
         titulo: item.titulo,
@@ -37,14 +37,20 @@ export default function Noticias() {
         tags: item.tags?.tags || [],
         texto: item.texto, // Incluído o texto da notícia
       }));
-
-      setNoticias(mappedNoticias);
+  
+      // Ordena as notícias da mais nova para a mais velha
+      const sortedNoticias = mappedNoticias.sort((a, b) => 
+        new Date(b.dataPublicacao).getTime() - new Date(a.dataPublicacao).getTime()
+      );
+  
+      setNoticias(sortedNoticias);
     } catch (error) {
       console.error("Erro ao buscar notícias:", error);
     } finally {
       setLoading(false);
     }
   };
+  
 
   useEffect(() => {
     fetchNoticias();
