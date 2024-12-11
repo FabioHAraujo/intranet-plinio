@@ -18,6 +18,7 @@ import StarterKit from "@tiptap/starter-kit";
 import Underline from "@tiptap/extension-underline";
 import Toolbar from "./Toolbar";
 import PocketBase from "pocketbase";
+import placeholder from '@/assets/teste.jpeg';
 
 const pb = new PocketBase("https://pocketbase.flecksteel.com.br");
 
@@ -30,7 +31,7 @@ type Noticia = {
   texto: string;
 };
 
-const placeholderImage = "/placeholder.jpg"; // Caminho para uma imagem local placeholder.
+const placeholderImage = placeholder.src; // Caminho para uma imagem local placeholder.
 
 export default function Noticias() {
   const [noticias, setNoticias] = useState<Noticia[]>([]);

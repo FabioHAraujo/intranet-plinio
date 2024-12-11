@@ -1,4 +1,4 @@
-'use client';
+"use client";
 
 import React, { useState } from 'react';
 import { useEditor, EditorContent } from '@tiptap/react';
@@ -15,6 +15,7 @@ const Editor = () => {
   const [selectedTag, setSelectedTag] = useState('');
   const [content, setContent] = useState('');
   const [banner, setBanner] = useState<File | null>(null);
+  const [recipient, setRecipient] = useState('allusers@flecksteel.com.br');
   const [loading, setLoading] = useState(false);
 
   const availableTags = [
@@ -61,7 +62,7 @@ const Editor = () => {
       attributes: {
         class:
           'ProseMirror flex flex-col px-4 py-3 justify-start border border-gray-400 items-start w-full gap-3 font-medium text-[16px] pt-4 rounded-md outline-none',
-        'data-placeholder': 'Digite aqui...', // Adiciona placeholder
+        'data-placeholder': 'Digite aqui...',
       },
     },
     onUpdate: ({ editor }) => {
@@ -79,6 +80,32 @@ const Editor = () => {
   const handleBannerChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files?.[0]) {
       setBanner(e.target.files[0]);
+    }
+  };
+
+  const sendNotification = async (id: string) => {
+    const payload = {
+      recipient,
+      subject: title,
+      message: `Uma nova notícia foi postada: <br/><br/>Clique aqui: <a href='https://intranet.flecksteel.com.br/sobre-a-noticia?id=${id}'>link</a><br/><br/>Ou acesse: https://intranet.flecksteel.com.br/sobre-a-noticia?id=${id}`,
+    };
+
+    try {
+      const response = await fetch('/api/envia_email_noticias', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(payload),
+      });
+
+      if (!response.ok) {
+        throw new Error('Erro ao enviar notificação.');
+      }
+
+      console.log('Notificação enviada:', await response.json());
+    } catch (error) {
+      console.error('Erro ao enviar notificação:', error);
     }
   };
 
@@ -103,6 +130,9 @@ const Editor = () => {
       const response = await pb.collection('noticias').create(formData);
       console.log('Notícia criada:', response);
 
+      const id = response.id;
+      await sendNotification(id);
+
       alert('Notícia criada com sucesso!');
       setTitle('');
       setTags([]);
@@ -121,7 +151,6 @@ const Editor = () => {
     <div className="max-w-full mx-auto py-8 space-y-6">
       <h1 className="text-3xl font-bold text-center">Criar Notícia</h1>
       <div className="space-y-4">
-        {/* Campo para o título */}
         <input
           type="text"
           value={title}
@@ -130,7 +159,6 @@ const Editor = () => {
           className="w-full border border-gray-300 rounded-md px-4 py-2 focus:outline-none focus:ring-2 focus:ring-sky-500"
         />
 
-        {/* Botão para adicionar banner */}
         <div className="flex items-center gap-4">
           <label
             htmlFor="banner"
@@ -148,7 +176,6 @@ const Editor = () => {
           {banner && <span className="text-sm text-gray-500">{banner.name}</span>}
         </div>
 
-        {/* Dropdown para adicionar tags */}
         <div className="flex gap-4 items-center">
           <select
             value={selectedTag}
@@ -173,19 +200,19 @@ const Editor = () => {
           </button>
         </div>
 
-        {/* Exibição das tags selecionadas */}
-        <div className="flex gap-2 flex-wrap">
-          {tags.map((tag) => (
-            <span
-              key={tag}
-              className="bg-gray-200 text-gray-700 px-3 py-1 rounded-full text-sm"
-            >
-              {tag}
-            </span>
-          ))}
+        <div className="flex flex-col gap-2">
+          <label className="font-semibold">Destinatário</label>
+          <select
+            value={recipient}
+            onChange={(e) => setRecipient(e.target.value)}
+            className="border border-gray-300 rounded-md px-4 py-2 focus:outline-none focus:ring-2 focus:ring-sky-500"
+          >
+            <option value="allusers@flecksteel.com.br">All Users</option>
+            <option value="fabio-araujo@flecksteel.com.br">Fábio</option>
+            <option value="angela-flores@flecksteel.com.br">Angela</option>
+          </select>
         </div>
 
-        {/* Editor de texto */}
         <div>
           <Toolbar editor={editor} />
           <div className="border p-4 rounded-md shadow-sm">
@@ -193,7 +220,6 @@ const Editor = () => {
           </div>
         </div>
 
-        {/* Botão de envio */}
         <button
           onClick={handleSubmit}
           disabled={loading}
