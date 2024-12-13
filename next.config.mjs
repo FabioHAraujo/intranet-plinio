@@ -38,6 +38,13 @@ const nextConfig = {
       },
     };
     config.stats = 'verbose';
+
+    // Adiciona fallback para lidar com o módulo 'canvas'
+    config.resolve.fallback = {
+      ...config.resolve.fallback,
+      canvas: false,
+    };
+
     return config;
   },
 };

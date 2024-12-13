@@ -30,6 +30,7 @@ export default function RootLayout({
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
+        <link rel="icon" href="@/assets/logo.png" sizes="any" />
         <ClientWrapper>{children}</ClientWrapper>
       </body>
     </html>
