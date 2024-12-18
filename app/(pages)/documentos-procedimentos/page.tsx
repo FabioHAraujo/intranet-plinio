@@ -3,10 +3,10 @@
 import React, { useEffect, useState } from 'react';
 import {
   Accordion,
+  AccordionContent,
   AccordionItem,
   AccordionTrigger,
-  AccordionContent,
-} from '@radix-ui/react-accordion';
+} from "@/components/ui/accordion"
 import PocketBase from 'pocketbase';
 import { useRouter } from 'next/navigation';
 

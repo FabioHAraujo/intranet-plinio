@@ -90,7 +90,7 @@ export default function Formandos() {
                   <div className="absolute bottom-4 left-4 text-primary-foreground">
                     <h2 className="text-xl font-bold text-white">{homenagem.nome}</h2>
                     <p className="text-sm pr-4 text-justify text-white">{homenagem.descricao}</p>
-                    <Badge className="relative text-xs mt-2 text-white">{tipo}</Badge>
+                    <Badge className="relative text-xs mt-2 bg-secondary text-secondary-foreground hover:bg-primary hover:text-primary-foreground">{tipo}</Badge>
                   </div>
                 </div>
               </Card>

@@ -95,7 +95,7 @@ export default function AnosConosco() {
     <p>Carregando...</p>
   ) : (
     <div className="container mx-auto p-6 min-h-screen">
-      <h1 className="text-4xl font-bold text-center mb-10">Anos Conosco</h1>
+      <h1 className="text-4xl font-bold text-center mb-10">Nossos Formandos</h1>
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
         {homenagens.map((homenagem) => (
           <Card key={homenagem.id} className="relative overflow-hidden">

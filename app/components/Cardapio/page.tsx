@@ -75,7 +75,7 @@ export default function Cardapio() {
                 </CardHeader>
                 <CardContent>
                   <div className="space-y-2">
-                    <p className="font-semibold">Almoço Normal:</p>
+                    <p className="font-semibold">Almoço/Janta Normal:</p>
                     {/* Formata texto do almoço normal */}
                     <div className="whitespace-pre-wrap text-sm">{formatText(day.main)}</div>
                     <Separator className="my-4" />
