@@ -236,7 +236,7 @@ export default function LayoutPadrao({ children }: LayoutProps) {
                 )}
               </AnimatePresence>
               <button
-                onClick={() => window.location.href = 'http://192.168.0.103/drupal/procedimentos.php'}
+                 onClick={() => router.push('/documentos-procedimentos')}
                 className="flex items-center gap-2 rounded-lg px-3 py-2 text-muted-foreground transition-all hover:text-foreground hover:bg-accent"
               >
                 <FileSearch className="h-4 w-4" />

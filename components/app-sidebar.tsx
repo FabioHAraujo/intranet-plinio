@@ -48,6 +48,7 @@ const data = {
         { title: "Notícia", url: "/admin/dashboard/add-noticia" },
         { title: "Tempo de Empresa", url: "/admin/dashboard/add-anos-conosco" },
         { title: "Formandos", url: "/admin/dashboard/add-formandos" },
+        { title: "Procedimentos", url: "/admin/dashboard/add-procedimentos" },
       ],
     },
   ],
