@@ -105,6 +105,7 @@ export default function AnosConosco() {
                 alt={homenagem.nome}
                 layout="fill"
                 objectFit="cover"
+                objectPosition="top"
                 className="rounded-t-lg"
               />
             </div>
