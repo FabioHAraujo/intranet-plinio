@@ -67,7 +67,7 @@ export default function PaginaDocumentos() {
       <input
         type="text"
         placeholder="Buscar por título ou grupo"
-        className="block w-full px-4 py-2 mb-6 border rounded-md"
+        className="block w-full px-4 py-2 mb-6 border rounded-md text-black"
         value={searchTerm}
         onChange={(e) => setSearchTerm(e.target.value)}
       />
