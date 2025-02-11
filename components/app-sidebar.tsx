@@ -38,6 +38,7 @@ const data = {
         { title: "Cardápio", url: "/admin/dashboard/editar-cardapio" },
         { title: "Editar Notícias", url: "/admin/dashboard/editar-noticias" },
         { title: "Editar Banners", url: "/admin/dashboard/editar-banners" },
+        { title: "Editar Procedimentos", url: "/admin/dashboard/editar-procedimentos" },
       ],
     },
     {
