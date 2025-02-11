@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Textarea } from '@/components/ui/textarea';
 import { Button } from '@/components/ui/button';
 import { CalendarIcon } from 'lucide-react';
@@ -17,6 +17,23 @@ export default function CadastrarCardapio() {
   const [selectedDate, setSelectedDate] = useState<Date | null>(null);
   const [isDatePickerOpen, setIsDatePickerOpen] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
+
+  useEffect(() => {
+    async function fetchLastCardapio() {
+      try {
+        const records = await pb.collection('cardapios').getList(1, 1, { sort: '-date' });
+        if (records.items.length > 0) {
+          const lastCardapio = records.items[0];
+          setNormalText(lastCardapio.main || '');
+          setSpecialText(lastCardapio.special || '');
+          setSelectedDate(new Date(lastCardapio.date));
+        }
+      } catch (error) {
+        console.error('Erro ao buscar último cardápio:', error);
+      }
+    }
+    fetchLastCardapio();
+  }, []);
 
   const handleApplyBold = (setter: React.Dispatch<React.SetStateAction<string>>, value: string) => {
     const selection = window.getSelection()?.toString();
@@ -35,13 +52,11 @@ export default function CadastrarCardapio() {
     try {
       setIsSubmitting(true);
 
-      // Ajusta a data para incluir o horário fixo de 12:00
       const adjustedDate = new Date(selectedDate);
-      adjustedDate.setHours(12, 0, 0, 0); // Define 12:00 (meio-dia)
+      adjustedDate.setHours(12, 0, 0, 0);
 
-      // Envia para o PocketBase
       await pb.collection('cardapios').create({
-        date: adjustedDate.toISOString(), // Envia a data com o horário ajustado
+        date: adjustedDate.toISOString(),
         main: normalText,
         special: specialText,
       });
@@ -63,7 +78,6 @@ export default function CadastrarCardapio() {
       <h1 className="text-3xl font-bold text-center mb-6">Cadastrar Cardápio</h1>
 
       <div className="space-y-4">
-        {/* Campo de Almoço Normal */}
         <div>
           <label htmlFor="normalText" className="block font-semibold">
             Almoço Normal:
@@ -85,7 +99,6 @@ export default function CadastrarCardapio() {
           </Button>
         </div>
 
-        {/* Campo de Almoço Especial */}
         <div>
           <label htmlFor="specialText" className="block font-semibold">
             Almoço Especial:
@@ -107,7 +120,6 @@ export default function CadastrarCardapio() {
           </Button>
         </div>
 
-        {/* Date Picker */}
         <div>
           <label className="block font-semibold">Data do Cardápio:</label>
           <Button
@@ -120,7 +132,6 @@ export default function CadastrarCardapio() {
             {selectedDate ? format(selectedDate, 'dd/MM/yyyy') : 'Selecionar Data'}
           </Button>
 
-          {/* Dialog do Date Picker */}
           <Dialog open={isDatePickerOpen} onOpenChange={setIsDatePickerOpen}>
             <DialogContent>
               <DialogHeader>
@@ -139,7 +150,6 @@ export default function CadastrarCardapio() {
           </Dialog>
         </div>
 
-        {/* Botão de Enviar */}
         <Button
           onClick={handleSubmit}
           disabled={isSubmitting}
