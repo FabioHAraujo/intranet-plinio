@@ -35,6 +35,8 @@ body {
     --input: 220 13% 91%;
     --ring: 224 71.4% 4.1%;
     --radius: 0.5rem;
+    --protheus-fundo: #066f95;
+    --protheus-hover: #044d68;
   }
  
   .dark {
@@ -57,6 +59,8 @@ body {
     --border: 220 16% 41%;
     --input: 215 27.9% 16.9%;
     --ring: 216 12.2% 83.9%;
+    --protheus-fundo: #066f95;
+    --protheus-hover: #044d68;
   }
 }
 

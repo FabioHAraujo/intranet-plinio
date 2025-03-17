@@ -94,6 +94,9 @@ export default function LayoutPadrao({ children }: LayoutProps) {
             Grupo Plínio Fleck
           </h1>
           <div className="ml-auto flex items-center gap-4">
+            <Button variant="destructive" className="left-4 bottom-4 w-56 hover:bg-[--protheus-hover] bg-[--protheus-fundo]" onClick={() => window.open('https://protheus.flecksteel.com.br/webapp/', '_blank')}>
+              Abrir Protheus
+            </Button>
             <Button variant="destructive" className="left-4 bottom-4 w-56 hover:bg-red-900" onClick={() => router.push('/denuncia')}>
               Denuncie um Abuso
             </Button>
