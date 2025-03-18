@@ -62,7 +62,7 @@ export default function AgendaList() {
             ) : filteredRamals.length > 0 ? (
               filteredRamals.map((ramal) => (
                 <TableRow key={ramal.id}>
-                  <TableCell>{ramal.ramal}</TableCell>
+                  <TableCell>*{ramal.ramal}</TableCell>
                   <TableCell>{ramal.nome}</TableCell>
                 </TableRow>
               ))

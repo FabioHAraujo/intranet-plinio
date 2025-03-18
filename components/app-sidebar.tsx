@@ -32,6 +32,7 @@ const data = {
       icon: Edit3,
       items: [
         { title: "Ramais", url: "/admin/dashboard/editar-ramais" },
+        { title: "Agenda Reduzida", url: "/admin/dashboard/editar-agenda-reduzida" },
         { title: "3x4 Funcionários", url: "/admin/dashboard/3x4-funcionarios" },
         { title: "Tempo de Empresa", url: "/admin/dashboard/editar-anos-conosco" },
         { title: "Formandos", url: "/admin/dashboard/editar-formandos" },
