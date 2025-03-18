@@ -38,7 +38,7 @@ export default function AgendaList() {
 
   return (
     <div className="container mx-auto p-4 space-y-4">
-      <h1 className="text-2xl font-bold">Lista de Ramais</h1>
+      <h1 className="text-2xl font-bold">Agenda Reduzida</h1>
       <Input
         type="search"
         placeholder="Pesquisar por nome ou número..."
