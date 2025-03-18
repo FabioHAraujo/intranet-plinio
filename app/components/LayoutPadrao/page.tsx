@@ -18,7 +18,8 @@ import {
   GraduationCap, 
   Newspaper, 
   CalendarHeart, 
-  FileSearch
+  FileSearch,
+  NotebookTabs
 } from "lucide-react"
 import Image from "next/image"
 import { Separator } from '@/components/ui/separator'
@@ -128,6 +129,13 @@ export default function LayoutPadrao({ children }: LayoutProps) {
             >
               <Phone className="h-4 w-4" />
               Ramais
+            </button>
+            <button
+              onClick={() => router.push('/agenda-reduzida')}
+              className="flex items-center gap-2 rounded-lg px-3 py-2 text-muted-foreground transition-all hover:text-foreground hover:bg-accent"
+            >
+              <NotebookTabs className="h-4 w-4" />
+              Agenda Reduzida
             </button>
             <button
               onClick={() => router.push('/cardapio')}
