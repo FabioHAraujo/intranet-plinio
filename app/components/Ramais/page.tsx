@@ -1,8 +1,15 @@
-'use client';
+"use client";
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect } from "react";
 import { Input } from "@/components/ui/input";
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
 interface Ramal {
   id: number;
   nome: string;
@@ -11,7 +18,7 @@ interface Ramal {
 }
 
 export default function RamalList() {
-  const [searchTerm, setSearchTerm] = useState('');
+  const [searchTerm, setSearchTerm] = useState("");
   const [ramais, setRamais] = useState<Ramal[]>([]);
   const [loading, setLoading] = useState(true);
 
@@ -19,24 +26,37 @@ export default function RamalList() {
   useEffect(() => {
     const fetchRamais = async () => {
       try {
-        const response = await fetch('/api/ramais');
+        const response = await fetch("/api/ramais");
         const data = await response.json();
-        setRamais(data);  // Certifique-se de que 'data' seja um array
+        setRamais(data); // Certifique-se de que 'data' seja um array
         setLoading(false);
       } catch (error) {
-        console.error('Erro ao buscar ramais:', error);
+        console.error("Erro ao buscar ramais:", error);
         setLoading(false);
       }
     };
-  
+
     fetchRamais();
   }, []);
 
-  const filteredRamals = Array.isArray(ramais) ? ramais.filter((ramal) =>
-    ramal.nome.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    ramal.ramal.toString().includes(searchTerm) ||
-    ramal.setor.toLowerCase().includes(searchTerm.toLowerCase())
-  ) : [];
+  // Função para normalizar strings (remove acentos e converte para minúsculo)
+  function normalizar(texto: string): string {
+    return texto
+      .normalize("NFD")
+      .replace(/[\u0300-\u036f]/g, "")
+      .toLowerCase();
+  }
+
+  const filteredRamals = Array.isArray(ramais)
+    ? ramais.filter((ramal) => {
+        const termo = normalizar(searchTerm);
+        return (
+          normalizar(ramal.nome).includes(termo) ||
+          normalizar(ramal.setor).includes(termo) ||
+          ramal.ramal.toString().includes(searchTerm) // Número não precisa normalizar
+        );
+      })
+    : [];
 
   return (
     <div className="container mx-auto p-4 space-y-4">
@@ -60,7 +80,9 @@ export default function RamalList() {
           <TableBody>
             {loading ? (
               <TableRow>
-                <TableCell colSpan={3} className="text-center">Carregando...</TableCell>
+                <TableCell colSpan={3} className="text-center">
+                  Carregando...
+                </TableCell>
               </TableRow>
             ) : filteredRamals.length > 0 ? (
               filteredRamals.map((ramal) => (
@@ -72,7 +94,9 @@ export default function RamalList() {
               ))
             ) : (
               <TableRow>
-                <TableCell colSpan={3} className="text-center">Nenhum ramal encontrado.</TableCell>
+                <TableCell colSpan={3} className="text-center">
+                  Nenhum ramal encontrado.
+                </TableCell>
               </TableRow>
             )}
           </TableBody>

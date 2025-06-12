@@ -30,7 +30,7 @@
     "@react-pdf-viewer/core": "^3.1.0",
     "@react-pdf-viewer/default-layout": "^3.1.0",
     "@react-pdf/renderer": "^4.1.5",
-    "@supabase/supabase-js": "^2.45.4",
+    "@supabase/supabase-js": "^2.50.0",
     "@tiptap/extension-list-item": "^2.10.3",
     "@tiptap/extension-underline": "^2.10.3",
     "@tiptap/pm": "^2.10.3",
