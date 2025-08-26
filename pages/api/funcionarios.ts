@@ -41,7 +41,7 @@ async function fetchFuncionarios(): Promise<Funcionario[]> {
       ON 
           R16ORN.numloc = R34FUN.numloc
       WHERE
-          R34FUN.NUMEMP IN ('13','9','10')
+          R34FUN.NUMEMP IN ('13','9','10','1')
           AND R34FUN.SITAFA <> '9'
           AND R34FUN.SITAFA <> '23'
           AND R34FUN.SITAFA <> '26'
