@@ -2,6 +2,9 @@
   "name": "shadcn1",
   "version": "0.1.0",
   "private": true,
+  "engines": {
+      "node": ">=21"
+  },
   "scripts": {
     "dev": "next dev",
     "dev2": "next dev -p 3001",
