@@ -72,6 +72,10 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     // Buscar informações da sala
     const sala = await pb.collection('salas_reuniao').getOne(sala_id);
 
+    // Gerar arquivo ICS
+    const icsContent = gerarICS(titulo, data, hora_inicio, hora_fim, sala.nome, participantes, email);
+    const icsBase64 = Buffer.from(icsContent).toString('base64');
+
     // Enviar e-mail para o criador
     const dataFormatada = new Date(data).toLocaleDateString('pt-BR');
     const mensagemCriador = `
@@ -84,12 +88,9 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         <li><strong>Horário:</strong> ${hora_inicio} - ${hora_fim}</li>
         ${participantes && participantes.length > 0 ? `<li><strong>Participantes:</strong> ${participantes.join(', ')}</li>` : ''}
       </ul>
-      <p>
-        <a href="data:text/calendar;charset=utf-8,${encodeURIComponent(gerarICS(titulo, data, hora_inicio, hora_fim, sala.nome, participantes))}" 
-           download="reuniao.ics" 
-           style="display:inline-block;padding:10px 20px;background-color:#0066cc;color:white;text-decoration:none;border-radius:5px;">
-          Adicionar à Agenda
-        </a>
+      <p style="margin-top: 20px;">
+        <strong>📅 Um evento foi anexado a este e-mail.</strong><br>
+        Abra o anexo <code>reuniao.ics</code> para adicionar à sua agenda (Outlook, Gmail, Apple Calendar, etc).
       </p>
     `;
 
@@ -100,6 +101,11 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         sendto: email,
         subject: `Reunião Agendada: ${titulo}`,
         message: mensagemCriador,
+        attachment: {
+          filename: 'reuniao.ics',
+          content: icsBase64,
+          contentType: 'text/calendar; charset=utf-8; method=REQUEST'
+        }
       }),
     });
 
@@ -114,12 +120,9 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
           <li><strong>Data:</strong> ${dataFormatada}</li>
           <li><strong>Horário:</strong> ${hora_inicio} - ${hora_fim}</li>
         </ul>
-        <p>
-          <a href="data:text/calendar;charset=utf-8,${encodeURIComponent(gerarICS(titulo, data, hora_inicio, hora_fim, sala.nome, participantes, email))}" 
-             download="reuniao.ics" 
-             style="display:inline-block;padding:10px 20px;background-color:#0066cc;color:white;text-decoration:none;border-radius:5px;">
-            Adicionar à Agenda
-          </a>
+        <p style="margin-top: 20px;">
+          <strong>📅 Um convite foi anexado a este e-mail.</strong><br>
+          Abra o anexo <code>reuniao.ics</code> para adicionar à sua agenda (Outlook, Gmail, Apple Calendar, etc).
         </p>
       `;
 
@@ -131,6 +134,11 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
             sendto: participante,
             subject: `Convite: ${titulo}`,
             message: mensagemParticipantes,
+            attachment: {
+              filename: 'reuniao.ics',
+              content: icsBase64,
+              contentType: 'text/calendar; charset=utf-8; method=REQUEST'
+            }
           }),
         });
       }
@@ -147,7 +155,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
   }
 }
 
-// Função para gerar arquivo ICS (iCalendar)
+// Função para gerar arquivo ICS (iCalendar) compatível com Outlook, Gmail, Apple
 function gerarICS(
   titulo: string, 
   data: string, 
@@ -157,32 +165,53 @@ function gerarICS(
   participantes?: string[],
   organizador?: string
 ): string {
+  // Formatar data e hora para formato iCalendar (YYYYMMDDTHHMMSS)
   const dataIso = data.replace(/-/g, '');
   const horaInicioIso = horaInicio.replace(/:/g, '') + '00';
   const horaFimIso = horaFim.replace(/:/g, '') + '00';
   
-  let ics = `BEGIN:VCALENDAR
-VERSION:2.0
-PRODID:-//Intranet Plinio//Agendamento Salas//PT
-BEGIN:VEVENT
-UID:${Date.now()}@flecksteel.com.br
-DTSTAMP:${new Date().toISOString().replace(/[-:]/g, '').split('.')[0]}Z
-DTSTART:${dataIso}T${horaInicioIso}
-DTEND:${dataIso}T${horaFimIso}
-SUMMARY:${titulo}
-LOCATION:${sala}`;
+  // Gerar UID único
+  const uid = `${Date.now()}-${Math.random().toString(36).substr(2, 9)}@flecksteel.com.br`;
+  
+  // Timestamp atual
+  const dtstamp = new Date().toISOString().replace(/[-:]/g, '').split('.')[0] + 'Z';
+  
+  let ics = `BEGIN:VCALENDAR\r
+VERSION:2.0\r
+PRODID:-//Intranet Plinio//Agendamento Salas//PT\r
+CALSCALE:GREGORIAN\r
+METHOD:REQUEST\r
+BEGIN:VEVENT\r
+UID:${uid}\r
+DTSTAMP:${dtstamp}\r
+DTSTART:${dataIso}T${horaInicioIso}\r
+DTEND:${dataIso}T${horaFimIso}\r
+SUMMARY:${titulo}\r
+DESCRIPTION:Reunião agendada via Intranet Plinio\r
+LOCATION:${sala}\r
+STATUS:CONFIRMED\r
+SEQUENCE:0\r
+PRIORITY:5\r`;
 
+  // Adicionar organizador
   if (organizador) {
-    ics += `\nORGANIZER:mailto:${organizador}`;
+    ics += `ORGANIZER;CN=${organizador}:mailto:${organizador}\r\n`;
   }
 
+  // Adicionar participantes
   if (participantes && participantes.length > 0) {
     participantes.forEach(p => {
-      ics += `\nATTENDEE:mailto:${p}`;
+      ics += `ATTENDEE;CUTYPE=INDIVIDUAL;ROLE=REQ-PARTICIPANT;PARTSTAT=NEEDS-ACTION;RSVP=TRUE;CN=${p}:mailto:${p}\r\n`;
     });
   }
 
-  ics += `\nEND:VEVENT
+  // Adicionar alarme (lembrete 15 minutos antes)
+  ics += `BEGIN:VALARM\r
+TRIGGER:-PT15M\r
+ACTION:DISPLAY\r
+DESCRIPTION:Lembrete: ${titulo}\r
+END:VALARM\r
+END:VEVENT\r
 END:VCALENDAR`;
 
   return ics;
