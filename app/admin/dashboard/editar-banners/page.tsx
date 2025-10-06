@@ -28,6 +28,7 @@ interface Banner {
   imageUrl: string;
   banner: string;
   ordem?: number;
+  ativo?: boolean;
 }
 
 export default function DashboardPage() {
@@ -172,21 +173,7 @@ export default function DashboardPage() {
       setEditingBanner(null);
       
       // Recarregar dados
-      const records = await pb.collection("carrocel").getFullList({
-        filter: "ativo = true",
-        sort: "ordem,-updated",
-      });
-
-      const formattedData = records.map((item: any) => ({
-        id: item.id,
-        title: item.titulo,
-        description: item.descricao,
-        imageUrl: `${pb.baseUrl}/api/files/carrocel/${item.id}/${item.banner}`,
-        banner: item.banner,
-        ordem: item.ordem || 0,
-      }));
-
-      setCarouselData(formattedData);
+      await refreshData();
     } catch (error) {
       console.error("Erro ao atualizar banner:", error);
       alert("Erro ao atualizar banner!");
@@ -201,10 +188,108 @@ export default function DashboardPage() {
     try {
       await pb.collection("carrocel").delete(id);
       setCarouselData(prev => prev.filter(b => b.id !== id));
+      setAllBanners(prev => prev.filter(b => b.id !== id));
       alert("Banner excluído com sucesso!");
     } catch (error) {
       console.error("Erro ao excluir banner:", error);
       alert("Erro ao excluir banner!");
+    }
+  };
+
+  const handleToggleActive = async (id: string, currentStatus: boolean) => {
+    try {
+      await pb.collection("carrocel").update(id, { ativo: !currentStatus });
+      
+      // Recarregar dados
+      await refreshData();
+      
+      alert(`Banner ${!currentStatus ? 'ativado' : 'desativado'} com sucesso!`);
+    } catch (error) {
+      console.error("Erro ao alterar status:", error);
+      alert("Erro ao alterar status do banner!");
+    }
+  };
+
+  const handleAddBanner = () => {
+    setEditTitle("");
+    setEditDescription("");
+    setEditImage(null);
+    setIsAddModalOpen(true);
+  };
+
+  const handleSaveNewBanner = async () => {
+    if (!editTitle || !editDescription || !editImage) {
+      alert("Preencha todos os campos!");
+      return;
+    }
+
+    setLoading(true);
+    try {
+      const formData = new FormData();
+      formData.append("titulo", editTitle);
+      formData.append("descricao", editDescription);
+      formData.append("banner", editImage);
+      formData.append("ativo", "true");
+      formData.append("ordem", String(allBanners.length));
+
+      await pb.collection("carrocel").create(formData);
+      
+      setIsAddModalOpen(false);
+      
+      // Recarregar dados
+      await refreshData();
+      
+      alert("Banner adicionado com sucesso!");
+    } catch (error) {
+      console.error("Erro ao adicionar banner:", error);
+      alert("Erro ao adicionar banner!");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const refreshData = async () => {
+    try {
+      // Buscar apenas ativos para o carousel
+      const activeRecords = await pb
+        .collection("carrocel")
+        .getFullList({
+          filter: "ativo = true",
+          sort: "ordem,-updated",
+        });
+
+      const activeData = activeRecords.map((item: any) => ({
+        id: item.id,
+        title: item.titulo,
+        description: item.descricao,
+        imageUrl: `${pb.baseUrl}/api/files/carrocel/${item.id}/${item.banner}`,
+        banner: item.banner,
+        ordem: item.ordem || 0,
+        ativo: item.ativo,
+      }));
+
+      setCarouselData(activeData);
+
+      // Buscar todos os banners
+      const allRecords = await pb
+        .collection("carrocel")
+        .getFullList({
+          sort: "ordem,-updated",
+        });
+
+      const allData = allRecords.map((item: any) => ({
+        id: item.id,
+        title: item.titulo,
+        description: item.descricao,
+        imageUrl: `${pb.baseUrl}/api/files/carrocel/${item.id}/${item.banner}`,
+        banner: item.banner,
+        ordem: item.ordem || 0,
+        ativo: item.ativo,
+      }));
+
+      setAllBanners(allData);
+    } catch (error) {
+      console.error("Erro ao recarregar dados:", error);
     }
   };
 
@@ -260,7 +345,23 @@ export default function DashboardPage() {
       </section>
       
       <div className="mt-8">
-        <h2 className="text-2xl font-bold mb-4">Gerenciar Banners</h2>
+        <div className="flex justify-between items-center mb-4">
+          <h2 className="text-2xl font-bold">Gerenciar Banners</h2>
+          <div className="flex gap-4">
+            <label className="flex items-center gap-2">
+              <input
+                type="checkbox"
+                checked={showInactive}
+                onChange={(e) => setShowInactive(e.target.checked)}
+                className="w-4 h-4"
+              />
+              <span className="text-sm">Mostrar inativos</span>
+            </label>
+            <Button onClick={handleAddBanner}>
+              + Adicionar Banner
+            </Button>
+          </div>
+        </div>
         <Table>
           <TableHeader>
             <TableRow>
@@ -268,22 +369,23 @@ export default function DashboardPage() {
               <TableHead>Título</TableHead>
               <TableHead>Descrição</TableHead>
               <TableHead>Banner</TableHead>
+              <TableHead>Status</TableHead>
               <TableHead className="text-right">Ações</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
-            {carouselData.length > 0 ? (
-              carouselData.map((slide, index) => (
+            {(showInactive ? allBanners : allBanners.filter(b => b.ativo)).length > 0 ? (
+              (showInactive ? allBanners : allBanners.filter(b => b.ativo)).map((slide, index) => (
                 <TableRow 
                   key={slide.id}
-                  draggable
-                  onDragStart={() => handleDragStart(index)}
-                  onDragOver={(e) => handleDragOver(e, index)}
-                  onDragEnd={handleDragEnd}
-                  className={`cursor-move ${draggedItem === index ? 'opacity-50' : ''}`}
+                  draggable={slide.ativo}
+                  onDragStart={() => slide.ativo && handleDragStart(index)}
+                  onDragOver={(e) => slide.ativo && handleDragOver(e, index)}
+                  onDragEnd={slide.ativo ? handleDragEnd : undefined}
+                  className={`${slide.ativo ? 'cursor-move' : 'opacity-60'} ${draggedItem === index ? 'opacity-50' : ''}`}
                 >
                   <TableCell>
-                    <GripVertical className="h-5 w-5 text-gray-400" />
+                    {slide.ativo && <GripVertical className="h-5 w-5 text-gray-400" />}
                   </TableCell>
                   <TableCell>{slide.title}</TableCell>
                   <TableCell>{slide.description}</TableCell>
@@ -297,6 +399,11 @@ export default function DashboardPage() {
                       />
                     </div>
                   </TableCell>
+                  <TableCell>
+                    <span className={`px-2 py-1 rounded text-xs ${slide.ativo ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'}`}>
+                      {slide.ativo ? 'Ativo' : 'Inativo'}
+                    </span>
+                  </TableCell>
                   <TableCell className="text-right">
                     <div className="flex justify-end gap-2">
                       <Button 
@@ -306,6 +413,13 @@ export default function DashboardPage() {
                       >
                         <Pencil className="h-4 w-4 mr-1" />
                         Editar
+                      </Button>
+                      <Button 
+                        variant={slide.ativo ? "secondary" : "default"}
+                        size="sm" 
+                        onClick={() => handleToggleActive(slide.id, slide.ativo || false)}
+                      >
+                        {slide.ativo ? 'Desativar' : 'Ativar'}
                       </Button>
                       <Button 
                         variant="destructive" 
@@ -321,7 +435,7 @@ export default function DashboardPage() {
               ))
             ) : (
               <TableRow>
-                <TableCell colSpan={5} className="text-center">
+                <TableCell colSpan={6} className="text-center">
                   Nenhum banner encontrado
                 </TableCell>
               </TableRow>
@@ -441,6 +555,80 @@ export default function DashboardPage() {
               disabled={loading}
             >
               {loading ? "Salvando..." : "Salvar Alterações"}
+            </Button>
+          </div>
+        </DialogContent>
+      </Dialog>
+
+      {/* Modal de adicionar banner */}
+      <Dialog open={isAddModalOpen} onOpenChange={setIsAddModalOpen}>
+        <DialogContent className="max-w-2xl">
+          <DialogHeader>
+            <DialogTitle>Adicionar Novo Banner</DialogTitle>
+            <DialogDescription>
+              Preencha as informações do novo banner abaixo.
+            </DialogDescription>
+          </DialogHeader>
+          
+          <div className="space-y-4 py-4">
+            <div className="space-y-2">
+              <Label htmlFor="add-title">Título *</Label>
+              <Input
+                id="add-title"
+                value={editTitle}
+                onChange={(e) => setEditTitle(e.target.value)}
+                placeholder="Digite o título do banner"
+              />
+            </div>
+
+            <div className="space-y-2">
+              <Label htmlFor="add-description">Descrição *</Label>
+              <Textarea
+                id="add-description"
+                value={editDescription}
+                onChange={(e) => setEditDescription(e.target.value)}
+                placeholder="Digite a descrição do banner"
+                rows={4}
+              />
+            </div>
+
+            <div className="space-y-2">
+              <Label htmlFor="add-image">Banner (imagem) *</Label>
+              <Input
+                id="add-image"
+                type="file"
+                accept="image/*"
+                ref={fileInputRef}
+                onChange={(e) => {
+                  const file = e.target.files?.[0];
+                  if (file) setEditImage(file);
+                }}
+              />
+              {editImage && (
+                <p className="text-sm text-muted-foreground">
+                  Arquivo selecionado: {editImage.name}
+                </p>
+              )}
+            </div>
+          </div>
+
+          <div className="flex justify-end gap-2">
+            <Button
+              variant="outline"
+              onClick={() => {
+                setIsAddModalOpen(false);
+                setEditTitle("");
+                setEditDescription("");
+                setEditImage(null);
+              }}
+            >
+              Cancelar
+            </Button>
+            <Button
+              onClick={handleSaveNewBanner}
+              disabled={loading || !editTitle || !editDescription || !editImage}
+            >
+              {loading ? "Salvando..." : "Adicionar Banner"}
             </Button>
           </div>
         </DialogContent>
