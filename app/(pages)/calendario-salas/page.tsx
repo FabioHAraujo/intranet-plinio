@@ -1,157 +1,105 @@
-import { FullScreenCalendar } from "@/components/ui/fullscreen-calendar";
+'use client';
 
-const reunioes = [
-  {
-    day: new Date("2025-08-02"),
-    events: [
-      {
-        id: 1,
-        name: "Planejamento de Produção",
-        time: "08:00",
-        datetime: "2025-08-02T08:00",
-      },
-      {
-        id: 2,
-        name: "Sincronização de Equipe Industrial",
-        time: "14:00",
-        datetime: "2025-08-02T14:00",
-      },
-    ],
-  },
-  {
-    day: new Date("2025-08-10"),
-    events: [
-      {
-        id: 3,
-        name: "Revisão de Lançamento de Produto",
-        time: "09:00",
-        datetime: "2025-08-10T09:00",
-      },
-      {
-        id: 4,
-        name: "Reunião de Marketing Industrial",
-        time: "11:00",
-        datetime: "2025-08-10T11:00",
-      },
-      {
-        id: 5,
-        name: "Reunião com Fornecedores",
-        time: "16:00",
-        datetime: "2025-08-10T16:00",
-      },
-    ],
-  },
-  {
-    day: new Date("2025-08-18"),
-    events: [
-      {
-        id: 6,
-        name: "Workshop de Melhoria de Processos",
-        time: "10:00",
-        datetime: "2025-08-18T10:00",
-      },
-    ],
-  },
-  {
-    day: new Date("2025-08-25"),
-    events: [
-      {
-        id: 7,
-        name: "Análise de Orçamento Industrial",
-        time: "15:00",
-        datetime: "2025-08-25T15:00",
-      },
-      {
-        id: 8,
-        name: "Planejamento de Sprint Produção",
-        time: "09:00",
-        datetime: "2025-08-25T09:00",
-      },
-      {
-        id: 9,
-        name: "Revisão de Projetos Industriais",
-        time: "13:00",
-        datetime: "2025-08-25T13:00",
-      },
-    ],
-  },
-  {
-    day: new Date("2025-08-30"),
-    events: [
-      {
-        id: 10,
-        name: "Apresentação para Cliente Industrial",
-        time: "10:00",
-        datetime: "2025-08-30T10:00",
-      },
-      {
-        id: 11,
-        name: "Almoço de Equipe Produção",
-        time: "12:30",
-        datetime: "2025-08-30T12:30",
-      },
-      {
-        id: 12,
-        name: "Atualização de Status de Projeto",
-        time: "14:00",
-        datetime: "2025-08-30T14:00",
-      },
-    ],
-  },
-  // Setembro
-  {
-    day: new Date("2025-09-05"),
-    events: [
-      {
-        id: 13,
-        name: "Reunião de Segurança Industrial",
-        time: "08:30",
-        datetime: "2025-09-05T08:30",
-      },
-      {
-        id: 14,
-        name: "Auditoria de Processos",
-        time: "15:00",
-        datetime: "2025-09-05T15:00",
-      },
-    ],
-  },
-  {
-    day: new Date("2025-09-12"),
-    events: [
-      {
-        id: 15,
-        name: "Treinamento de Operadores",
-        time: "09:00",
-        datetime: "2025-09-12T09:00",
-      },
-      {
-        id: 16,
-        name: "Reunião de Manutenção Preventiva",
-        time: "14:00",
-        datetime: "2025-09-12T14:00",
-      },
-    ],
-  },
-  {
-    day: new Date("2025-09-20"),
-    events: [
-      {
-        id: 17,
-        name: "Reunião de Inovação Industrial",
-        time: "10:00",
-        datetime: "2025-09-20T10:00",
-      },
-      {
-        id: 18,
-        name: "Revisão de Indicadores de Produção",
-        time: "16:00",
-        datetime: "2025-09-20T16:00",
-      },
-    ],
-  },
-]
+import { useState, useEffect } from 'react';
+import { FullScreenCalendar } from "@/components/ui/fullscreen-calendar";
+import PocketBase from "pocketbase";
+import { isSameDay } from "date-fns";
+
+const pb = new PocketBase("https://pocketbase.flecksteel.com.br");
+
+interface Agendamento {
+  id: string;
+  sala: string;
+  titulo: string;
+  data: string;
+  hora_inicio: string;
+  hora_fim: string;
+  criador_email: string;
+  participantes: string[];
+  expand?: {
+    sala: {
+      id: string;
+      nome: string;
+    };
+  };
+}
+
+interface Sala {
+  id: string;
+  nome: string;
+}
 
 export default function CalendarioSalasPage() {
-  return <FullScreenCalendar data={reunioes} />;
+  const [reunioes, setReunioes] = useState<any[]>([]);
+  const [salas, setSalas] = useState<Sala[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  const fetchData = async () => {
+    try {
+      setLoading(true);
+      
+      // Buscar salas
+      const salasData = await pb.collection('salas_reuniao').getFullList<Sala>({
+        sort: 'nome',
+      });
+      setSalas(salasData);
+
+      // Buscar agendamentos do mês atual
+      const hoje = new Date();
+      const mes = hoje.getMonth() + 1;
+      const ano = hoje.getFullYear();
+      
+      const agendamentos = await pb.collection('agendamento_salas_reuniao').getFullList<Agendamento>({
+        expand: 'sala',
+        sort: 'data,hora_inicio',
+      });
+
+      // Transformar dados para o formato do calendário
+      const reunioesAgrupadas: Record<string, any[]> = {};
+      
+      agendamentos.forEach((agendamento) => {
+        const data = agendamento.data;
+        if (!reunioesAgrupadas[data]) {
+          reunioesAgrupadas[data] = [];
+        }
+        
+        reunioesAgrupadas[data].push({
+          id: agendamento.id,
+          titulo: agendamento.titulo,
+          hora_inicio: agendamento.hora_inicio,
+          hora_fim: agendamento.hora_fim,
+          sala: agendamento.sala,
+          sala_nome: agendamento.expand?.sala?.nome || '',
+          criador_email: agendamento.criador_email,
+          participantes: agendamento.participantes || [],
+        });
+      });
+
+      // Converter para formato do calendário
+      const reunioesFormatadas = Object.entries(reunioesAgrupadas).map(([data, events]) => ({
+        day: new Date(data + 'T00:00:00'),
+        events,
+      }));
+
+      setReunioes(reunioesFormatadas);
+      setLoading(false);
+    } catch (error) {
+      console.error('Erro ao buscar dados:', error);
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    fetchData();
+  }, []);
+
+  if (loading) {
+    return (
+      <div className="flex items-center justify-center h-screen">
+        <p>Carregando calendário...</p>
+      </div>
+    );
+  }
+
+  return <FullScreenCalendar data={reunioes} salas={salas} onReload={fetchData} />;
 }

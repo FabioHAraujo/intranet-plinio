@@ -12,7 +12,6 @@ import {
   isSameDay,
   isSameMonth,
   isToday,
-  parse,
   startOfToday,
   startOfWeek,
 } from "date-fns"
@@ -24,6 +23,7 @@ import {
   ChevronRightIcon,
   PlusCircleIcon,
   SearchIcon,
+  X,
 } from "lucide-react"
 
 import { cn } from "@/lib/utils"
@@ -33,13 +33,17 @@ import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover
 import { Input } from "@/components/ui/input"
 import { Separator } from "@/components/ui/separator"
 import { useMediaQuery } from "@/hooks/use-media-query"
+import { Badge } from "@/components/ui/badge"
 
 interface Event {
-  id: number
-  name: string
-  time: string
-  datetime: string
+  id: string
+  titulo: string
+  hora_inicio: string
+  hora_fim: string
   sala: string
+  sala_nome?: string
+  criador_email: string
+  participantes: string[]
 }
 
 interface CalendarData {
@@ -47,8 +51,15 @@ interface CalendarData {
   events: Event[]
 }
 
+interface Sala {
+  id: string
+  nome: string
+}
+
 interface FullScreenCalendarProps {
   data: CalendarData[]
+  salas: Sala[]
+  onReload: () => void
 }
 
 const colStartClasses = [
@@ -61,9 +72,7 @@ const colStartClasses = [
   "col-start-7",
 ]
 
-export function FullScreenCalendar({ data }: FullScreenCalendarProps) {
-  // Salas disponíveis
-  const salas = ["RH - Reuniões", "Auditório"]
+export function FullScreenCalendar({ data, salas, onReload }: FullScreenCalendarProps) {
   const today = startOfToday()
   const [selectedDay, setSelectedDay] = React.useState(today)
   const [currentMonth, setCurrentMonth] = React.useState(
@@ -71,16 +80,27 @@ export function FullScreenCalendar({ data }: FullScreenCalendarProps) {
   )
   const [modalOpen, setModalOpen] = React.useState(false)
   const [modalNovaOpen, setModalNovaOpen] = React.useState(false)
-  const [novaSala, setNovaSala] = React.useState(salas[0])
-  const [novaNome, setNovaNome] = React.useState("")
-  const [novaHora, setNovaHora] = React.useState("")
+  const [modalOtpOpen, setModalOtpOpen] = React.useState(false)
+  
+  // Dados do formulário
+  const [novaSala, setNovaSala] = React.useState(salas[0]?.id || "")
+  const [novaTitulo, setNovaTitulo] = React.useState("")
+  const [novaHoraInicio, setNovaHoraInicio] = React.useState("")
   const [novaHoraFim, setNovaHoraFim] = React.useState("")
   const [novaData, setNovaData] = React.useState<Date | null>(selectedDay)
+  const [novoEmail, setNovoEmail] = React.useState("")
+  const [participanteInput, setParticipanteInput] = React.useState("")
+  const [participantes, setParticipantes] = React.useState<string[]>([])
+  const [otp, setOtp] = React.useState("")
+  const [loading, setLoading] = React.useState(false)
   const [openDatePicker, setOpenDatePicker] = React.useState(false)
+  const [mensagemErro, setMensagemErro] = React.useState("")
+
   const firstDayCurrentMonth = React.useMemo(() => {
     const [year, month] = currentMonth.split("-").map(Number)
     return new Date(year, month - 1, 1)
   }, [currentMonth])
+  
   const isDesktop = useMediaQuery("(min-width: 768px)")
 
   const days = eachDayOfInterval({
@@ -102,121 +122,362 @@ export function FullScreenCalendar({ data }: FullScreenCalendarProps) {
     setCurrentMonth(format(today, "yyyy-MM"))
   }
 
-  // Estado local para reuniões
-  const [reunioes, setReunioes] = React.useState<CalendarData[]>([])
-  React.useEffect(() => {
-    let base: CalendarData[] = Array.isArray(data) ? JSON.parse(JSON.stringify(data)) : []
-    if (typeof document !== 'undefined') {
-      const cookie = document.cookie.split('; ').find(row => row.startsWith('reunioes='))
-      if (cookie) {
-        try {
-          const reunioesCookie = JSON.parse(decodeURIComponent(cookie.split('=')[1]))
-          if (Array.isArray(reunioesCookie)) {
-            reunioesCookie.forEach((r: any) => {
-              const idx = base.findIndex((d: CalendarData) => isSameDay(new Date(d.day), new Date(r.day)))
-              if (idx >= 0) {
-                base[idx].events.push({...r, day: undefined})
-              } else {
-                base.push({ day: new Date(r.day), events: [{...r, day: undefined}] })
-              }
-            })
-          }
-        } catch {}
-      }
-    }
-    setReunioes(base)
-  }, [data])
+  const eventosDoDia = data.filter((date) => isSameDay(date.day, selectedDay)).flatMap((date) => date.events)
 
-  // ...restante do componente...
-
-  React.useEffect(() => {
-    let base: CalendarData[] = Array.isArray(data) ? JSON.parse(JSON.stringify(data)) : []
-    if (typeof document !== 'undefined') {
-      const cookie = document.cookie.split('; ').find(row => row.startsWith('reunioes='))
-      if (cookie) {
-        try {
-          const reunioesCookie = JSON.parse(decodeURIComponent(cookie.split('=')[1]))
-          if (Array.isArray(reunioesCookie)) {
-            reunioesCookie.forEach((r: any) => {
-              const idx = base.findIndex((d: CalendarData) => isSameDay(new Date(d.day), new Date(r.day)))
-              if (idx >= 0) {
-                base[idx].events.push({...r, day: undefined})
-              } else {
-                base.push({ day: new Date(r.day), events: [{...r, day: undefined}] })
-              }
-            })
-          }
-        } catch {}
-      }
+  // Adicionar participante
+  function adicionarParticipante() {
+    if (participanteInput && participanteInput.includes("@")) {
+      setParticipantes([...participantes, participanteInput])
+      setParticipanteInput("")
     }
-    setReunioes(base)
-  }, [data])
-
-  const eventosDoDia = (reunioes ?? []).filter((date: CalendarData) => isSameDay(date.day, selectedDay)).flatMap((date: CalendarData) => date.events)
-  // Horários ocupados por sala
-  const horariosOcupados: Record<string, string[]> = {};
-  salas.forEach(sala => {
-    horariosOcupados[sala] = eventosDoDia.filter(ev => ev.sala === sala).map(ev => ev.time)
-  })
-  // Salvar nova reunião em cookie
-  function salvarNovaReuniao() {
-    if (!novaNome || !novaHora || !novaSala || !novaData) return;
-    // Não permitir conflito
-    const diaSelecionado = format(novaData, "yyyy-MM-dd")
-    const conflitos = reunioes
-      .filter(r => format(r.day, "yyyy-MM-dd") === diaSelecionado)
-      .flatMap(r => r.events)
-      .filter(ev => ev.sala === novaSala && ev.time === novaHora)
-    if (conflitos.length > 0) return alert("Horário já ocupado para esta sala!");
-    const nova = {
-      id: Math.floor(Math.random() * 1000000),
-      name: novaNome,
-      time: novaHora,
-      datetime: format(novaData, "yyyy-MM-dd") + "T" + novaHora,
-      sala: novaSala,
-      day: novaData,
-    }
-    // Salvar no cookie
-    const cookie = document.cookie.split('; ').find(row => row.startsWith('reunioes='))
-    let reunioesCookie = []
-    if (cookie) {
-      try {
-        reunioesCookie = JSON.parse(decodeURIComponent(cookie.split('=')[1]))
-      } catch {}
-    }
-    reunioesCookie.push({ ...nova, day: novaData.toISOString() })
-    document.cookie = `reunioes=${encodeURIComponent(JSON.stringify(reunioesCookie))};path=/;max-age=31536000`
-    setModalNovaOpen(false)
-    setNovaNome("")
-    setNovaHora("")
-    setNovaSala(salas[0])
-    setNovaData(selectedDay)
-    window.location.reload()
   }
 
-  // Tradução dos dias da semana
-  const diasSemana = ["Segunda", "Terça", "Quarta", "Quinta", "Sexta", "Sábado", "Domingo"]
+  // Remover participante
+  function removerParticipante(email: string) {
+    setParticipantes(participantes.filter(p => p !== email))
+  }
+
+  // Solicitar OTP
+  async function solicitarOTP() {
+    setMensagemErro("")
+    
+    if (!novaTitulo || !novaSala || !novaData || !novaHoraInicio || !novaHoraFim || !novoEmail) {
+      setMensagemErro("Preencha todos os campos obrigatórios")
+      return
+    }
+
+    if (!novoEmail.includes("@")) {
+      setMensagemErro("E-mail inválido")
+      return
+    }
+
+    if (novaHoraInicio >= novaHoraFim) {
+      setMensagemErro("O horário de término deve ser após o horário de início")
+      return
+    }
+
+    setLoading(true)
+
+    try {
+      const response = await fetch("/api/enviar_otp_reuniao", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email: novoEmail }),
+      })
+
+      const result = await response.json()
+
+      if (response.ok) {
+        setModalNovaOpen(false)
+        setModalOtpOpen(true)
+      } else {
+        setMensagemErro(result.error || "Erro ao enviar código")
+      }
+    } catch (error) {
+      setMensagemErro("Erro ao enviar código de verificação")
+    } finally {
+      setLoading(false)
+    }
+  }
+
+  // Confirmar agendamento com OTP
+  async function confirmarAgendamento() {
+    setMensagemErro("")
+    
+    if (!otp || otp.length !== 6) {
+      setMensagemErro("Digite o código de 6 dígitos")
+      return
+    }
+
+    setLoading(true)
+
+    try {
+      const response = await fetch("/api/validar_otp_reuniao", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          email: novoEmail,
+          codigo: otp,
+          sala_id: novaSala,
+          titulo: novaTitulo,
+          data: novaData ? format(novaData, "yyyy-MM-dd") : "",
+          hora_inicio: novaHoraInicio,
+          hora_fim: novaHoraFim,
+          participantes,
+        }),
+      })
+
+      const result = await response.json()
+
+      if (response.ok) {
+        setModalOtpOpen(false)
+        resetForm()
+        onReload()
+      } else {
+        setMensagemErro(result.error || "Erro ao confirmar agendamento")
+      }
+    } catch (error) {
+      setMensagemErro("Erro ao confirmar agendamento")
+    } finally {
+      setLoading(false)
+    }
+  }
+
+  // Reset do formulário
+  function resetForm() {
+    setNovaTitulo("")
+    setNovaSala(salas[0]?.id || "")
+    setNovaData(selectedDay)
+    setNovaHoraInicio("")
+    setNovaHoraFim("")
+    setNovoEmail("")
+    setParticipantes([])
+    setOtp("")
+    setMensagemErro("")
+  }
+
+  const diasSemana = ["Domingo", "Segunda", "Terça", "Quarta", "Quinta", "Sexta", "Sábado"]
 
   return (
     <div className="flex flex-1 flex-col">
-      {/* Modal de eventos do dia */}
       <Dialog open={modalOpen} onOpenChange={setModalOpen}>
         <DialogContent>
           <DialogHeader>
-            <DialogTitle>Eventos agendados para {format(selectedDay, "dd 'de' MMMM 'de' yyyy", { locale: ptBR })}</DialogTitle>
+            <DialogTitle>
+              Eventos agendados para {format(selectedDay, "dd 'de' MMMM 'de' yyyy", { locale: ptBR })}
+            </DialogTitle>
             <DialogDescription>
               {eventosDoDia.length === 0 ? (
                 <span>Nenhum evento agendado para este dia.</span>
               ) : (
                 <ul className="mt-2 space-y-2">
-                  {eventosDoDia.map((event: Event) => (
-                    <li key={event.id} className="border rounded-lg p-2 bg-muted/50">
-                      <div className="font-semibold">{event.name}</div>
-                      <div className="text-xs text-muted-foreground">Horário: {event.time}</div>
+                  {eventosDoDia.map((event) => (
+                    <li key={event.id} className="border rounded-lg p-3 bg-muted/50">
+                      <div className="font-semibold">{event.titulo}</div>
+                      <div className="text-xs text-muted-foreground">
+                        {event.sala_nome || event.sala}
+                      </div>
+                      <div className="text-xs text-muted-foreground">
+                        Horário: {event.hora_inicio} - {event.hora_fim}
+                      </div>
+                      <div className="text-xs text-muted-foreground">
+                        Organizador: {event.criador_email}
+                      </div>
+                      {event.participantes && event.participantes.length > 0 && (
+                        <div className="text-xs text-muted-foreground mt-1">
+                          Participantes: {event.participantes.join(", ")}
+                        </div>
+                      )}
                     </li>
                   ))}
                 </ul>
               )}
+            </DialogDescription>
+          </DialogHeader>
+        </DialogContent>
+      </Dialog>
+
+      {/* Modal Nova Reunião */}
+      <Dialog open={modalNovaOpen} onOpenChange={setModalNovaOpen}>
+        <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
+          <DialogHeader>
+            <DialogTitle>Agendar nova reunião</DialogTitle>
+            <DialogDescription>
+              <div className="flex flex-col gap-4 mt-4">
+                {mensagemErro && (
+                  <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded">
+                    {mensagemErro}
+                  </div>
+                )}
+
+                <div>
+                  <label className="text-sm font-medium">Título da reunião *</label>
+                  <Input 
+                    value={novaTitulo} 
+                    onChange={e => setNovaTitulo(e.target.value)} 
+                    placeholder="Ex: Reunião de planejamento"
+                    className="mt-1"
+                  />
+                </div>
+
+                <div>
+                  <label className="text-sm font-medium">Sala *</label>
+                  <select 
+                    value={novaSala} 
+                    onChange={e => setNovaSala(e.target.value)} 
+                    className="w-full mt-1 border rounded p-2 bg-[hsl(var(--background))] text-[hsl(var(--foreground))]"
+                  >
+                    {salas.map(sala => (
+                      <option key={sala.id} value={sala.id}>{sala.nome}</option>
+                    ))}
+                  </select>
+                </div>
+
+                <div>
+                  <label className="text-sm font-medium">Data *</label>
+                  <Popover open={openDatePicker} onOpenChange={setOpenDatePicker}>
+                    <PopoverTrigger asChild>
+                      <Button variant="outline" className="w-full justify-start mt-1">
+                        {novaData ? format(novaData, "dd 'de' MMMM 'de' yyyy", { locale: ptBR }) : "Escolha a data"}
+                      </Button>
+                    </PopoverTrigger>
+                    <PopoverContent className="w-auto p-0">
+                      <Calendar
+                        mode="single"
+                        selected={novaData ?? undefined}
+                        onSelect={date => {
+                          setNovaData(date ?? null)
+                          setOpenDatePicker(false)
+                        }}
+                        defaultMonth={novaData ?? selectedDay}
+                        initialFocus
+                      />
+                    </PopoverContent>
+                  </Popover>
+                </div>
+
+                <div className="grid grid-cols-2 gap-4">
+                  <div>
+                    <label className="text-sm font-medium">Horário de início *</label>
+                    <select
+                      value={novaHoraInicio}
+                      onChange={e => setNovaHoraInicio(e.target.value)}
+                      className="w-full mt-1 border rounded p-2 bg-[hsl(var(--background))] text-[hsl(var(--foreground))]"
+                    >
+                      <option value="">Selecione...</option>
+                      {Array.from({ length: 48 }, (_, i) => {
+                        const hour = Math.floor(i / 2)
+                        const minute = i % 2 === 0 ? "00" : "30"
+                        const hora = `${hour.toString().padStart(2, "0")}:${minute}`
+                        return (
+                          <option key={hora} value={hora}>{hora}</option>
+                        )
+                      })}
+                    </select>
+                  </div>
+
+                  <div>
+                    <label className="text-sm font-medium">Horário de término *</label>
+                    <select
+                      value={novaHoraFim}
+                      onChange={e => setNovaHoraFim(e.target.value)}
+                      className="w-full mt-1 border rounded p-2 bg-[hsl(var(--background))] text-[hsl(var(--foreground))]"
+                    >
+                      <option value="">Selecione...</option>
+                      {Array.from({ length: 48 }, (_, i) => {
+                        const hour = Math.floor(i / 2)
+                        const minute = i % 2 === 0 ? "00" : "30"
+                        const hora = `${hour.toString().padStart(2, "0")}:${minute}`
+                        return (
+                          <option key={hora} value={hora}>{hora}</option>
+                        )
+                      })}
+                    </select>
+                  </div>
+                </div>
+
+                <div>
+                  <label className="text-sm font-medium">Seu e-mail *</label>
+                  <Input 
+                    type="email"
+                    value={novoEmail} 
+                    onChange={e => setNovoEmail(e.target.value)} 
+                    placeholder="seu.email@empresa.com"
+                    className="mt-1"
+                  />
+                </div>
+
+                <div>
+                  <label className="text-sm font-medium">Participantes (opcional)</label>
+                  <div className="flex gap-2 mt-1">
+                    <Input 
+                      type="email"
+                      value={participanteInput} 
+                      onChange={e => setParticipanteInput(e.target.value)} 
+                      placeholder="email@empresa.com"
+                      onKeyPress={e => e.key === 'Enter' && (e.preventDefault(), adicionarParticipante())}
+                    />
+                    <Button type="button" onClick={adicionarParticipante}>Adicionar</Button>
+                  </div>
+                  {participantes.length > 0 && (
+                    <div className="flex flex-wrap gap-2 mt-2">
+                      {participantes.map((p, idx) => (
+                        <Badge key={idx} variant="secondary" className="flex items-center gap-1">
+                          {p}
+                          <X 
+                            size={14} 
+                            className="cursor-pointer" 
+                            onClick={() => removerParticipante(p)}
+                          />
+                        </Badge>
+                      ))}
+                    </div>
+                  )}
+                </div>
+
+                <Button 
+                  onClick={solicitarOTP} 
+                  disabled={loading}
+                  className="mt-2"
+                >
+                  {loading ? "Enviando..." : "Enviar código de verificação"}
+                </Button>
+              </div>
+            </DialogDescription>
+          </DialogHeader>
+        </DialogContent>
+      </Dialog>
+
+      {/* Modal OTP */}
+      <Dialog open={modalOtpOpen} onOpenChange={setModalOtpOpen}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Confirme seu código</DialogTitle>
+            <DialogDescription>
+              <div className="flex flex-col gap-4 mt-4">
+                {mensagemErro && (
+                  <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded">
+                    {mensagemErro}
+                  </div>
+                )}
+
+                <p className="text-sm">
+                  Digite o código de 6 dígitos que foi enviado para <strong>{novoEmail}</strong>
+                </p>
+
+                <Input 
+                  type="text"
+                  value={otp} 
+                  onChange={e => setOtp(e.target.value.replace(/\D/g, '').slice(0, 6))} 
+                  placeholder="000000"
+                  className="text-center text-2xl tracking-widest"
+                  maxLength={6}
+                />
+
+                <p className="text-xs text-muted-foreground">
+                  O código expira em 5 minutos. Verifique sua caixa de entrada e spam.
+                </p>
+
+                <div className="flex gap-2">
+                  <Button 
+                    variant="outline"
+                    onClick={() => {
+                      setModalOtpOpen(false)
+                      setModalNovaOpen(true)
+                    }}
+                    className="flex-1"
+                  >
+                    Voltar
+                  </Button>
+                  <Button 
+                    onClick={confirmarAgendamento} 
+                    disabled={loading || otp.length !== 6}
+                    className="flex-1"
+                  >
+                    {loading ? "Confirmando..." : "Confirmar agendamento"}
+                  </Button>
+                </div>
+              </div>
             </DialogDescription>
           </DialogHeader>
         </DialogContent>
@@ -239,7 +500,8 @@ export function FullScreenCalendar({ data }: FullScreenCalendarProps) {
                 {format(firstDayCurrentMonth, "MMMM yyyy", { locale: ptBR })}
               </h2>
               <p className="text-sm text-muted-foreground">
-                {format(firstDayCurrentMonth, "dd 'de' MMMM 'de' yyyy", { locale: ptBR })} - {format(endOfMonth(firstDayCurrentMonth), "dd 'de' MMMM 'de' yyyy", { locale: ptBR })}
+                {format(firstDayCurrentMonth, "dd 'de' MMMM 'de' yyyy", { locale: ptBR })} -{" "}
+                {format(endOfMonth(firstDayCurrentMonth), "dd 'de' MMMM 'de' yyyy", { locale: ptBR })}
               </p>
             </div>
           </div>
@@ -281,110 +543,12 @@ export function FullScreenCalendar({ data }: FullScreenCalendarProps) {
           </div>
 
           <Separator orientation="vertical" className="hidden h-6 md:block" />
-          <Separator
-            orientation="horizontal"
-            className="block w-full md:hidden"
-          />
+          <Separator orientation="horizontal" className="block w-full md:hidden" />
 
           <Button className="w-full gap-2 md:w-auto" onClick={() => setModalNovaOpen(true)}>
             <PlusCircleIcon size={16} strokeWidth={2} aria-hidden="true" />
             <span>Nova Reunião</span>
           </Button>
-      {/* Modal Nova Reunião */}
-      <Dialog open={modalNovaOpen} onOpenChange={setModalNovaOpen}>
-        <DialogContent>
-          <DialogHeader>
-        <DialogTitle>Agendar nova reunião</DialogTitle>
-        <DialogDescription>
-          <div className="flex flex-col gap-2 mt-2">
-            <label>Sala:</label>
-            <select value={novaSala} onChange={e => setNovaSala(e.target.value)} className="border rounded p-1 bg-[hsl(var(--background))] text-[hsl(var(--foreground))]">
-          {salas.map(sala => <option key={sala} value={sala}>{sala}</option>)}
-            </select>
-            <label>Nome da reunião:</label>
-            <Input value={novaNome} onChange={e => setNovaNome(e.target.value)} className="border rounded p-1 bg-[hsl(var(--background))] text-[hsl(var(--foreground))]" placeholder="" />
-            <label>Dia:</label>
-            <Popover open={openDatePicker} onOpenChange={setOpenDatePicker}>
-          <PopoverTrigger asChild>
-            <Button variant="outline" className="w-full justify-start bg-[hsl(var(--background))] text-[hsl(var(--foreground))]">
-              {novaData ? format(novaData, "dd 'de' MMMM 'de' yyyy", { locale: ptBR }) : "Escolha o dia"}
-            </Button>
-          </PopoverTrigger>
-          <PopoverContent className="w-auto p-0">
-            <Calendar
-              mode="single"
-              selected={novaData ?? undefined}
-              onSelect={date => {
-                setNovaData(date ?? null)
-                setOpenDatePicker(false)
-              }}
-              defaultMonth={novaData ?? selectedDay}
-              initialFocus
-              className="rounded-lg border bg-[hsl(var(--background))] text-[hsl(var(--foreground))]"
-            />
-          </PopoverContent>
-            </Popover>
-            <div className="flex gap-2">
-          <div className="flex flex-col flex-1">
-            <label>Horário inicial:</label>
-            <select
-              value={novaHora}
-              onChange={e => setNovaHora(e.target.value)}
-              className="border rounded p-1 bg-[hsl(var(--background))] text-[hsl(var(--foreground))] max-h-48 overflow-y-auto"
-              size={8}
-            >
-              <option value="">Selecione...</option>
-              {Array.from({ length: 48 }, (_, i) => {
-            const hour = Math.floor(i / 2);
-            const minute = i % 2 === 0 ? "00" : "30";
-            const hora = `${hour.toString().padStart(2, "0")}:${minute}`;
-            const indisponivel = reunioes
-              .filter(r => format(r.day, "yyyy-MM-dd") === (novaData ? format(novaData, "yyyy-MM-dd") : ""))
-              .flatMap(r => r.events)
-              .filter(ev => ev.sala === novaSala && ev.time === hora).length > 0;
-            return (
-              <option key={hora} value={hora} disabled={indisponivel}>
-                {hora} {indisponivel ? "(Indisponível)" : ""}
-              </option>
-            );
-              })}
-            </select>
-          </div>
-          <div className="flex flex-col flex-1">
-            <label>Horário final:</label>
-            <select
-              value={novaHoraFim}
-              onChange={e => setNovaHoraFim(e.target.value)}
-              className="border rounded p-1 bg-[hsl(var(--background))] text-[hsl(var(--foreground))] max-h-48 overflow-y-auto"
-              size={8}
-            >
-              <option value="">Selecione...</option>
-              {Array.from({ length: 48 }, (_, i) => {
-            const hour = Math.floor(i / 2);
-            const minute = i % 2 === 0 ? "00" : "30";
-            const hora = `${hour.toString().padStart(2, "0")}:${minute}`;
-            // Só permite horários após o inicial
-            const isAfterStart = novaHora ? hora > novaHora : true;
-            // Verifica se está ocupado
-            const indisponivel = reunioes
-              .filter(r => format(r.day, "yyyy-MM-dd") === (novaData ? format(novaData, "yyyy-MM-dd") : ""))
-              .flatMap(r => r.events)
-              .filter(ev => ev.sala === novaSala && ev.time === hora).length > 0;
-            return (
-              <option key={hora} value={hora} disabled={!isAfterStart || indisponivel}>
-                {hora} {indisponivel ? "(Indisponível)" : ""}
-              </option>
-            );
-              })}
-            </select>
-          </div>
-            </div>
-            <Button onClick={salvarNovaReuniao} className="mt-2">Salvar</Button>
-          </div>
-        </DialogDescription>
-          </DialogHeader>
-        </DialogContent>
-      </Dialog>
         </div>
       </div>
 
@@ -393,7 +557,9 @@ export function FullScreenCalendar({ data }: FullScreenCalendarProps) {
         {/* Cabeçalho dos dias da semana */}
         <div className="grid grid-cols-7 border text-center text-xs font-semibold leading-6 lg:flex-none rounded-t-xl">
           {diasSemana.map((dia, idx) => (
-            <div key={dia} className={idx < 6 ? "border-r py-2.5" : "py-2.5"}>{dia}</div>
+            <div key={dia} className={idx < 6 ? "border-r py-2.5" : "py-2.5"}>
+              {dia}
+            </div>
           ))}
         </div>
 
@@ -403,15 +569,18 @@ export function FullScreenCalendar({ data }: FullScreenCalendarProps) {
             {days.map((day, dayIdx) => (
               <div
                 key={dayIdx}
-                onClick={() => { setSelectedDay(day); setModalOpen(true); }}
+                onClick={() => {
+                  setSelectedDay(day)
+                  setModalOpen(true)
+                }}
                 className={cn(
                   dayIdx === 0 && colStartClasses[getDay(day)],
                   !isEqual(day, selectedDay) &&
                     !isToday(day) &&
                     !isSameMonth(day, firstDayCurrentMonth) &&
                     "bg-accent/50 text-muted-foreground",
-                  "relative flex flex-col border-b border-r hover:bg-muted focus:z-10 cursor-pointer rounded-b-xl",
-                  !isEqual(day, selectedDay) && "hover:bg-accent/75",
+                  "relative flex flex-col border-b border-r hover:bg-muted focus:z-10 cursor-pointer",
+                  !isEqual(day, selectedDay) && "hover:bg-accent/75"
                 )}
               >
                 <header className="flex items-center justify-between p-2.5">
@@ -427,20 +596,13 @@ export function FullScreenCalendar({ data }: FullScreenCalendarProps) {
                         !isToday(day) &&
                         !isSameMonth(day, firstDayCurrentMonth) &&
                         "text-muted-foreground",
-                      isEqual(day, selectedDay) &&
-                        isToday(day) &&
-                        "border-none bg-primary",
-                      isEqual(day, selectedDay) &&
-                        !isToday(day) &&
-                        "bg-foreground",
-                      (isEqual(day, selectedDay) || isToday(day)) &&
-                        "font-semibold",
-                      "flex h-7 w-7 items-center justify-center rounded-full text-xs hover:border",
+                      isEqual(day, selectedDay) && isToday(day) && "border-none bg-primary",
+                      isEqual(day, selectedDay) && !isToday(day) && "bg-foreground",
+                      (isEqual(day, selectedDay) || isToday(day)) && "font-semibold",
+                      "flex h-7 w-7 items-center justify-center rounded-full text-xs hover:border"
                     )}
                   >
-                    <time dateTime={format(day, "yyyy-MM-dd")}> 
-                      {format(day, "d")}
-                    </time>
+                    <time dateTime={format(day, "yyyy-MM-dd")}>{format(day, "d")}</time>
                   </button>
                 </header>
                 <div className="flex-1 p-2.5">
@@ -448,22 +610,21 @@ export function FullScreenCalendar({ data }: FullScreenCalendarProps) {
                     .filter((event) => isSameDay(event.day, day))
                     .map((day) => (
                       <div key={day.day.toString()} className="space-y-1.5">
-                        {day.events.slice(0, 1).map((event) => (
+                        {day.events.slice(0, 2).map((event) => (
                           <div
                             key={event.id}
                             className="flex flex-col items-start gap-1 rounded-lg border bg-muted/50 p-2 text-xs leading-tight"
                           >
-                            <p className="font-medium leading-none">
-                              {event.name}
-                            </p>
+                            <p className="font-medium leading-none">{event.titulo}</p>
                             <p className="leading-none text-muted-foreground">
-                              {event.time}
+                              {event.hora_inicio}
                             </p>
                           </div>
                         ))}
-                        {day.events.length > 1 && (
+                        {day.events.length > 2 && (
                           <div className="text-xs text-muted-foreground">
-                            + {day.events.length - 1} {day.events.length - 1 === 1 ? "reunião" : "reuniões"}
+                            + {day.events.length - 2}{" "}
+                            {day.events.length - 2 === 1 ? "reunião" : "reuniões"}
                           </div>
                         )}
                       </div>
@@ -476,7 +637,10 @@ export function FullScreenCalendar({ data }: FullScreenCalendarProps) {
           <div className="isolate grid w-full grid-cols-7 grid-rows-5 border-x lg:hidden">
             {days.map((day, dayIdx) => (
               <button
-                onClick={() => { setSelectedDay(day); setModalOpen(true); }}
+                onClick={() => {
+                  setSelectedDay(day)
+                  setModalOpen(true)
+                }}
                 key={dayIdx}
                 type="button"
                 className={cn(
@@ -489,9 +653,8 @@ export function FullScreenCalendar({ data }: FullScreenCalendarProps) {
                     !isToday(day) &&
                     !isSameMonth(day, firstDayCurrentMonth) &&
                     "text-muted-foreground",
-                  (isEqual(day, selectedDay) || isToday(day)) &&
-                    "font-semibold",
-                  "flex h-14 flex-col border-b border-r px-3 py-2 hover:bg-muted focus:z-10 cursor-pointer",
+                  (isEqual(day, selectedDay) || isToday(day)) && "font-semibold",
+                  "flex h-14 flex-col border-b border-r px-3 py-2 hover:bg-muted focus:z-10 cursor-pointer"
                 )}
               >
                 <time
@@ -503,7 +666,7 @@ export function FullScreenCalendar({ data }: FullScreenCalendarProps) {
                       "bg-primary text-primary-foreground",
                     isEqual(day, selectedDay) &&
                       !isToday(day) &&
-                      "bg-primary text-primary-foreground",
+                      "bg-primary text-primary-foreground"
                   )}
                 >
                   {format(day, "d")}
@@ -535,3 +698,4 @@ export function FullScreenCalendar({ data }: FullScreenCalendarProps) {
     </div>
   )
 }
+
