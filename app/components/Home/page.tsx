@@ -28,7 +28,7 @@ export default function Home() {
       try {
         const data = await pb.collection("carrocel").getList(1, 50, {
           filter: 'ativo = true', // Filtra somente os registros onde ativo é true
-          sort: "-updated", // Ordena pelos mais recentes
+          sort: "ordem,-updated", // Ordena pela ordem definida no admin, depois pelos mais recentes
         });        
         // Adiciona a URL base para os banners
         const formattedData = data.items.map((item) => ({
