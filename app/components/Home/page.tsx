@@ -17,33 +17,50 @@ import PocketBase from "pocketbase";
 
 const pb = new PocketBase("https://pocketbase.flecksteel.com.br");
 
+interface CarouselItem {
+  id: string;
+  title: string;
+  description: string;
+  imageUrl: string;
+}
+
 export default function Home() {
-  const [carouselData, setCarouselData] = useState([]);
+  const [carouselData, setCarouselData] = useState<CarouselItem[]>([]);
   const [currentSlide, setCurrentSlide] = useState(0);
   const [isModalOpen, setIsModalOpen] = useState(false);
 
   // Fetch dados do PocketBase
   useEffect(() => {
+    const controller = new AbortController();
+    
     const fetchCarouselData = async () => {
       try {
         const data = await pb.collection("carrocel").getList(1, 50, {
-          filter: 'ativo = true', // Filtra somente os registros onde ativo é true
-          sort: "ordem,-updated", // Ordena pela ordem definida no admin, depois pelos mais recentes
+          filter: 'ativo = true',
+          sort: "ordem,-updated",
         });        
-        // Adiciona a URL base para os banners
+        
         const formattedData = data.items.map((item) => ({
           id: item.id,
           title: item.titulo,
           description: item.descricao,
           imageUrl: `${pb.baseUrl}/api/files/carrocel/${item.id}/${item.banner}`,
         }));
+        
         setCarouselData(formattedData);
-      } catch (error) {
+      } catch (error: any) {
+        if (error.name === 'AbortError') {
+          return;
+        }
         console.error("Erro ao buscar dados do PocketBase:", error);
       }
     };
 
     fetchCarouselData();
+
+    return () => {
+      controller.abort();
+    };
   }, []);
 
   return (
@@ -52,9 +69,22 @@ export default function Home() {
         <Swiper
           modules={[Navigation, Pagination, Autoplay]}
           navigation
-          pagination={{ clickable: true }}
-          loop
+          pagination={{ 
+            clickable: true,
+            dynamicBullets: true,
+          }}
+          loop={carouselData.length > 1}
+          autoplay={{
+            delay: 5000,
+            disableOnInteraction: false,
+          }}
           className="w-full h-full rounded-lg flex"
+          onSwiper={(swiper) => {
+            // Força uma atualização após o Swiper ser inicializado
+            setTimeout(() => {
+              swiper.update();
+            }, 100);
+          }}
         >
           {carouselData.map((slide, index) => (
             <SwiperSlide key={slide.id} className="!flex !flex-row items-center h-auto relative">
