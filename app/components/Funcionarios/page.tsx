@@ -94,16 +94,24 @@ export default function Funcionarios() {
   const [expandedMonth, setExpandedMonth] = useState<string>("");
 
   useEffect(() => {
+    const controller = new AbortController();
+    
     const fetchFuncionarios = async () => {
       try {
-        const response = await fetch('/api/funcionarios');
+        const response = await fetch('/api/funcionarios', {
+          signal: controller.signal,
+        });
         const data = await response.json();
         if (Array.isArray(data)) {
           setFuncionarios(data);
         } else {
           console.error("Dados inválidos recebidos: ", data);
         }
-      } catch (error) {
+      } catch (error: any) {
+        // Ignora erros de abort
+        if (error.name === 'AbortError') {
+          return;
+        }
         console.error("Erro ao buscar funcionários:", error);
       } finally {
         setLoading(false);
@@ -111,6 +119,11 @@ export default function Funcionarios() {
     };
 
     fetchFuncionarios();
+
+    // Cancela a requisição se o componente for desmontado
+    return () => {
+      controller.abort();
+    };
   }, []);
 
   useEffect(() => {

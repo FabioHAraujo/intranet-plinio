@@ -79,16 +79,24 @@ export default function Aniversariantes() {
   const [expandedMonth, setExpandedMonth] = useState<string>("");
 
   useEffect(() => {
+    const controller = new AbortController();
+    
     const fetchAniversarios = async () => {
       try {
-        const response = await fetch('/api/aniversarios');
+        const response = await fetch('/api/aniversarios', {
+          signal: controller.signal,
+        });
         const data = await response.json();
         if (Array.isArray(data)) {
           setAniversarios(data);
         } else {
           console.error("Dados inválidos recebidos: ", data);
         }
-      } catch (error) {
+      } catch (error: any) {
+        // Ignora erros de abort
+        if (error.name === 'AbortError') {
+          return;
+        }
         console.error("Erro ao buscar aniversários:", error);
       } finally {
         setLoading(false);
@@ -96,6 +104,11 @@ export default function Aniversariantes() {
     };
 
     fetchAniversarios();
+
+    // Cancela a requisição se o componente for desmontado
+    return () => {
+      controller.abort();
+    };
   }, []);
 
   useEffect(() => {

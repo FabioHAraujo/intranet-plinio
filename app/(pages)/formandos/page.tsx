@@ -26,21 +26,34 @@ export default function Formandos() {
   const scrollRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
+    const controller = new AbortController();
+    
     const fetchData = async () => {
       try {
-        const response = await fetch(`/api/${tipo}`);
+        const response = await fetch(`/api/${tipo}`, {
+          signal: controller.signal,
+        });
         if (!response.ok) {
           throw new Error('Erro ao buscar dados da API');
         }
         const data: Homenagem[] = await response.json();
         setHomenagens(data);
         setCarregado(true);
-      } catch (error) {
+      } catch (error: any) {
+        // Ignora erros de abort
+        if (error.name === 'AbortError') {
+          return;
+        }
         console.error('Erro ao buscar dados:', error);
       }
     };
 
     fetchData();
+
+    // Cancela a requisição se o componente for desmontado
+    return () => {
+      controller.abort();
+    };
   }, [tipo]);
 
   useEffect(() => {

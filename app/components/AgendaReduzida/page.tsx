@@ -21,19 +21,32 @@ export default function AgendaList() {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
+    const controller = new AbortController();
+    
     const fetchRamais = async () => {
       try {
-        const response = await fetch('/api/agenda_reduzida');
+        const response = await fetch('/api/agenda_reduzida', {
+          signal: controller.signal,
+        });
         const data = await response.json();
         setRamais(data);
         setLoading(false);
-      } catch (error) {
+      } catch (error: any) {
+        // Ignora erros de abort
+        if (error.name === 'AbortError') {
+          return;
+        }
         console.error('Erro ao buscar agenda reduzida:', error);
         setLoading(false);
       }
     };
 
     fetchRamais();
+
+    // Cancela a requisição se o componente for desmontado
+    return () => {
+      controller.abort();
+    };
   }, []);
 
   const filteredRamals = Array.isArray(ramais)

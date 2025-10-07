@@ -24,19 +24,32 @@ export default function RamalList() {
 
   // Buscar dados dos ramais ao carregar o componente
   useEffect(() => {
+    const controller = new AbortController();
+    
     const fetchRamais = async () => {
       try {
-        const response = await fetch("/api/ramais");
+        const response = await fetch("/api/ramais", {
+          signal: controller.signal,
+        });
         const data = await response.json();
-        setRamais(data); // Certifique-se de que 'data' seja um array
+        setRamais(data);
         setLoading(false);
-      } catch (error) {
+      } catch (error: any) {
+        // Ignora erros de abort
+        if (error.name === 'AbortError') {
+          return;
+        }
         console.error("Erro ao buscar ramais:", error);
         setLoading(false);
       }
     };
 
     fetchRamais();
+
+    // Cancela a requisição se o componente for desmontado
+    return () => {
+      controller.abort();
+    };
   }, []);
 
   // Função para normalizar strings (remove acentos e converte para minúsculo)

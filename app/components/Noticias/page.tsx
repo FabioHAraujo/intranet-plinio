@@ -22,9 +22,11 @@ export default function Noticias() {
   const [loading, setLoading] = useState(true);
   const router = useRouter();
 
-  const fetchNoticias = async () => {
+  const fetchNoticias = async (signal?: AbortSignal) => {
     try {
-      const response = await fetch("https://pocketbase.flecksteel.com.br/api/collections/noticias/records");
+      const response = await fetch("https://pocketbase.flecksteel.com.br/api/collections/noticias/records", {
+        signal,
+      });
       const data = await response.json();
   
       const mappedNoticias = data.items.map((item: any) => ({
@@ -44,7 +46,11 @@ export default function Noticias() {
       );
   
       setNoticias(sortedNoticias);
-    } catch (error) {
+    } catch (error: any) {
+      // Ignora erros de abort
+      if (error.name === 'AbortError') {
+        return;
+      }
       console.error("Erro ao buscar notícias:", error);
     } finally {
       setLoading(false);
@@ -53,7 +59,13 @@ export default function Noticias() {
   
 
   useEffect(() => {
-    fetchNoticias();
+    const controller = new AbortController();
+    fetchNoticias(controller.signal);
+
+    // Cancela a requisição se o componente for desmontado
+    return () => {
+      controller.abort();
+    };
   }, []);
 
   const formatDate = (dateString: string): string => {

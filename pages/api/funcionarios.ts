@@ -24,6 +24,7 @@ async function fetchFuncionarios(): Promise<Funcionario[]> {
     const result = await connection.execute(`
       SELECT DISTINCT
           R34FUN.numcad AS CRACHA,
+          R34FUN.numemp AS EMPRESA,
           R34FUN.nomfun AS FUNCIONARIO, 
           R16ORN.nomloc AS SETOR,
           CASE 
@@ -64,9 +65,10 @@ async function fetchFuncionarios(): Promise<Funcionario[]> {
     // Agora especificamos que `rows` é do tipo `RowType[]`
     const funcionarios: Funcionario[] = (result.rows as RowType[]).map((row) => ({
       CRACHA: row[0],
-      FUNCIONARIO: row[1],
-      SETOR: row[2],
-      ADMISSAO: row[3],
+      EMPRESA: row[1],
+      FUNCIONARIO: row[2],
+      SETOR: row[3],
+      ADMISSAO: row[4],
     }));
 
     return funcionarios;
