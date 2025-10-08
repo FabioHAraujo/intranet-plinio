@@ -18,12 +18,14 @@ import {
 import { ptBR } from "date-fns/locale"
 import { Dialog } from "@/components/ui/dialog"
 import { DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog"
+import { Alert, AlertDescription } from "@/components/ui/alert"
 import {
   ChevronLeftIcon,
   ChevronRightIcon,
   PlusCircleIcon,
   SearchIcon,
   X,
+  AlertCircle,
 } from "lucide-react"
 
 import { cn } from "@/lib/utils"
@@ -44,6 +46,10 @@ interface Event {
   sala_nome?: string
   criador_email: string
   participantes: string[]
+  recorrente?: boolean
+  recorrencia_tipo?: 'diaria' | 'semanal' | 'mensal'
+  recorrencia_ate?: string
+  evento_pai_id?: string
 }
 
 interface CalendarData {
@@ -81,6 +87,9 @@ export function FullScreenCalendar({ data, salas, onReload }: FullScreenCalendar
   const [modalOpen, setModalOpen] = React.useState(false)
   const [modalNovaOpen, setModalNovaOpen] = React.useState(false)
   const [modalOtpOpen, setModalOtpOpen] = React.useState(false)
+  const [modalCancelarOpen, setModalCancelarOpen] = React.useState(false)
+  const [modalOtpCancelarOpen, setModalOtpCancelarOpen] = React.useState(false)
+  const [eventoSelecionado, setEventoSelecionado] = React.useState<Event | null>(null)
   
   // Dados do formulário
   const [novaSala, setNovaSala] = React.useState(salas[0]?.id || "")
@@ -92,9 +101,16 @@ export function FullScreenCalendar({ data, salas, onReload }: FullScreenCalendar
   const [participanteInput, setParticipanteInput] = React.useState("")
   const [participantes, setParticipantes] = React.useState<string[]>([])
   const [otp, setOtp] = React.useState("")
+  const [otpCancelar, setOtpCancelar] = React.useState("")
   const [loading, setLoading] = React.useState(false)
   const [openDatePicker, setOpenDatePicker] = React.useState(false)
   const [mensagemErro, setMensagemErro] = React.useState("")
+  
+  // Campos de recorrência
+  const [isRecorrente, setIsRecorrente] = React.useState(false)
+  const [recorrenciaTipo, setRecorrenciaTipo] = React.useState<'diaria' | 'semanal' | 'mensal'>('semanal')
+  const [recorrenciaAte, setRecorrenciaAte] = React.useState<Date | null>(null)
+  const [openRecorrenciaDatePicker, setOpenRecorrenciaDatePicker] = React.useState(false)
 
   const firstDayCurrentMonth = React.useMemo(() => {
     const [year, month] = currentMonth.split("-").map(Number)
@@ -204,6 +220,9 @@ export function FullScreenCalendar({ data, salas, onReload }: FullScreenCalendar
           hora_inicio: novaHoraInicio,
           hora_fim: novaHoraFim,
           participantes,
+          recorrente: isRecorrente,
+          recorrencia_tipo: isRecorrente ? recorrenciaTipo : undefined,
+          recorrencia_ate: isRecorrente && recorrenciaAte ? format(recorrenciaAte, "yyyy-MM-dd") : undefined,
         }),
       })
 
@@ -233,7 +252,88 @@ export function FullScreenCalendar({ data, salas, onReload }: FullScreenCalendar
     setNovoEmail("")
     setParticipantes([])
     setOtp("")
+    setOtpCancelar("")
     setMensagemErro("")
+    setIsRecorrente(false)
+    setRecorrenciaTipo('semanal')
+    setRecorrenciaAte(null)
+  }
+
+  // Solicitar OTP para cancelar
+  async function solicitarOTPCancelar(event: Event) {
+    setEventoSelecionado(event)
+    setMensagemErro("")
+    setLoading(true)
+
+    try {
+      const response = await fetch("/api/enviar_otp_cancelar_reuniao", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ 
+          email: event.criador_email,
+          evento_id: event.id 
+        }),
+      })
+
+      const result = await response.json()
+
+      if (response.ok) {
+        setModalCancelarOpen(false)
+        setModalOtpCancelarOpen(true)
+      } else {
+        setMensagemErro(result.error || "Erro ao enviar código")
+      }
+    } catch (error) {
+      setMensagemErro("Erro ao enviar código de verificação")
+    } finally {
+      setLoading(false)
+    }
+  }
+
+  // Confirmar cancelamento com OTP
+  async function confirmarCancelamento() {
+    setMensagemErro("")
+    
+    if (!otpCancelar || otpCancelar.length !== 6) {
+      setMensagemErro("Digite o código de 6 dígitos")
+      return
+    }
+
+    if (!eventoSelecionado) {
+      setMensagemErro("Evento não selecionado")
+      return
+    }
+
+    setLoading(true)
+
+    try {
+      const response = await fetch("/api/validar_otp_cancelar_reuniao", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          email: eventoSelecionado.criador_email,
+          codigo: otpCancelar,
+          evento_id: eventoSelecionado.id,
+        }),
+      })
+
+      const result = await response.json()
+
+      if (response.ok) {
+        setModalOtpCancelarOpen(false)
+        setModalCancelarOpen(false)
+        setModalOpen(false)
+        setEventoSelecionado(null)
+        setOtpCancelar("")
+        onReload()
+      } else {
+        setMensagemErro(result.error || "Erro ao confirmar cancelamento")
+      }
+    } catch (error) {
+      setMensagemErro("Erro ao confirmar cancelamento")
+    } finally {
+      setLoading(false)
+    }
   }
 
   const diasSemana = ["Domingo", "Segunda", "Terça", "Quarta", "Quinta", "Sexta", "Sábado"]
@@ -253,21 +353,41 @@ export function FullScreenCalendar({ data, salas, onReload }: FullScreenCalendar
                 <ul className="mt-2 space-y-2">
                   {eventosDoDia.map((event) => (
                     <li key={event.id} className="border rounded-lg p-3 bg-muted/50">
-                      <div className="font-semibold">{event.titulo}</div>
-                      <div className="text-xs text-muted-foreground">
-                        {event.sala_nome || event.sala}
-                      </div>
-                      <div className="text-xs text-muted-foreground">
-                        Horário: {event.hora_inicio} - {event.hora_fim}
-                      </div>
-                      <div className="text-xs text-muted-foreground">
-                        Organizador: {event.criador_email}
-                      </div>
-                      {event.participantes && event.participantes.length > 0 && (
-                        <div className="text-xs text-muted-foreground mt-1">
-                          Participantes: {event.participantes.join(", ")}
+                      <div className="flex justify-between items-start">
+                        <div className="flex-1">
+                          <div className="font-semibold">{event.titulo}</div>
+                          {event.recorrente && (
+                            <Badge variant="outline" className="text-xs mt-1">
+                              Recorrente ({event.recorrencia_tipo})
+                            </Badge>
+                          )}
+                          <div className="text-xs text-muted-foreground mt-1">
+                            {event.sala_nome || event.sala}
+                          </div>
+                          <div className="text-xs text-muted-foreground">
+                            Horário: {event.hora_inicio} - {event.hora_fim}
+                          </div>
+                          <div className="text-xs text-muted-foreground">
+                            Organizador: {event.criador_email}
+                          </div>
+                          {event.participantes && event.participantes.length > 0 && (
+                            <div className="text-xs text-muted-foreground mt-1">
+                              Participantes: {event.participantes.join(", ")}
+                            </div>
+                          )}
                         </div>
-                      )}
+                        <Button
+                          variant="destructive"
+                          size="sm"
+                          onClick={() => {
+                            setEventoSelecionado(event)
+                            setModalCancelarOpen(true)
+                          }}
+                          className="ml-2"
+                        >
+                          Cancelar
+                        </Button>
+                      </div>
                     </li>
                   ))}
                 </ul>
@@ -415,9 +535,70 @@ export function FullScreenCalendar({ data, salas, onReload }: FullScreenCalendar
                   )}
                 </div>
 
+                <Separator className="my-4" />
+
+                <div className="space-y-3">
+                  <div className="flex items-center space-x-2">
+                    <input
+                      type="checkbox"
+                      id="recorrente"
+                      checked={isRecorrente}
+                      onChange={(e) => setIsRecorrente(e.target.checked)}
+                      className="h-4 w-4 rounded border-gray-300"
+                    />
+                    <label htmlFor="recorrente" className="text-sm font-medium">
+                      Reunião recorrente
+                    </label>
+                  </div>
+
+                  {isRecorrente && (
+                    <>
+                      <div>
+                        <label className="text-sm font-medium">Tipo de recorrência *</label>
+                        <select
+                          value={recorrenciaTipo}
+                          onChange={e => setRecorrenciaTipo(e.target.value as 'diaria' | 'semanal' | 'mensal')}
+                          className="w-full mt-1 border rounded p-2 bg-[hsl(var(--background))] text-[hsl(var(--foreground))]"
+                        >
+                          <option value="diaria">Diariamente</option>
+                          <option value="semanal">Semanalmente</option>
+                          <option value="mensal">Mensalmente</option>
+                        </select>
+                      </div>
+
+                      <div>
+                        <label className="text-sm font-medium">Repetir até *</label>
+                        <Popover open={openRecorrenciaDatePicker} onOpenChange={setOpenRecorrenciaDatePicker}>
+                          <PopoverTrigger asChild>
+                            <Button variant="outline" className="w-full justify-start mt-1">
+                              {recorrenciaAte ? format(recorrenciaAte, "dd 'de' MMMM 'de' yyyy", { locale: ptBR }) : "Escolha a data final"}
+                            </Button>
+                          </PopoverTrigger>
+                          <PopoverContent className="w-auto p-0">
+                            <Calendar
+                              mode="single"
+                              selected={recorrenciaAte ?? undefined}
+                              onSelect={date => {
+                                setRecorrenciaAte(date ?? null)
+                                setOpenRecorrenciaDatePicker(false)
+                              }}
+                              defaultMonth={recorrenciaAte ?? novaData ?? selectedDay}
+                              disabled={(date) => date < (novaData ?? selectedDay)}
+                              initialFocus
+                            />
+                          </PopoverContent>
+                        </Popover>
+                        <p className="text-xs text-muted-foreground mt-1">
+                          As reuniões serão criadas automaticamente até esta data
+                        </p>
+                      </div>
+                    </>
+                  )}
+                </div>
+
                 <Button 
                   onClick={solicitarOTP} 
-                  disabled={loading}
+                  disabled={loading || (isRecorrente && !recorrenciaAte)}
                   className="mt-2"
                 >
                   {loading ? "Enviando..." : "Enviar código de verificação"}
@@ -475,6 +656,143 @@ export function FullScreenCalendar({ data, salas, onReload }: FullScreenCalendar
                     className="flex-1"
                   >
                     {loading ? "Confirmando..." : "Confirmar agendamento"}
+                  </Button>
+                </div>
+              </div>
+            </DialogDescription>
+          </DialogHeader>
+        </DialogContent>
+      </Dialog>
+
+      {/* Modal Confirmar Cancelamento */}
+      <Dialog open={modalCancelarOpen} onOpenChange={setModalCancelarOpen}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Cancelar Reunião</DialogTitle>
+            <DialogDescription>
+              <div className="flex flex-col gap-4 mt-4">
+                {mensagemErro && (
+                  <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded">
+                    {mensagemErro}
+                  </div>
+                )}
+
+                {eventoSelecionado && (
+                  <div className="border rounded-lg p-4 bg-muted/50">
+                    <div className="font-semibold text-lg mb-2">{eventoSelecionado.titulo}</div>
+                    <div className="text-sm space-y-1">
+                      <p><strong>Sala:</strong> {eventoSelecionado.sala_nome || eventoSelecionado.sala}</p>
+                      <p><strong>Data:</strong> {format(selectedDay, "dd 'de' MMMM 'de' yyyy", { locale: ptBR })}</p>
+                      <p><strong>Horário:</strong> {eventoSelecionado.hora_inicio} - {eventoSelecionado.hora_fim}</p>
+                      <p><strong>Organizador:</strong> {eventoSelecionado.criador_email}</p>
+                      {eventoSelecionado.recorrente && (
+                        <Badge variant="outline" className="mt-2">
+                          Reunião Recorrente ({eventoSelecionado.recorrencia_tipo})
+                        </Badge>
+                      )}
+                    </div>
+                  </div>
+                )}
+
+                <Alert className="border-amber-200 bg-amber-50 dark:bg-amber-950 dark:border-amber-800">
+                  <AlertCircle className="h-4 w-4 text-amber-600" />
+                  <AlertDescription className="text-amber-800 dark:text-amber-300 text-sm">
+                    Um código de verificação será enviado para o e-mail do organizador: <strong>{eventoSelecionado?.criador_email}</strong>
+                  </AlertDescription>
+                </Alert>
+
+                {eventoSelecionado?.recorrente && (
+                  <Alert className="border-blue-200 bg-blue-50 dark:bg-blue-950 dark:border-blue-800">
+                    <AlertCircle className="h-4 w-4 text-blue-600" />
+                    <AlertDescription className="text-blue-800 dark:text-blue-300 text-sm">
+                      <strong>Atenção:</strong> Esta é uma reunião recorrente. Apenas esta ocorrência será cancelada.
+                    </AlertDescription>
+                  </Alert>
+                )}
+
+                <div className="flex gap-2 mt-2">
+                  <Button 
+                    variant="outline"
+                    onClick={() => {
+                      setModalCancelarOpen(false)
+                      setEventoSelecionado(null)
+                      setMensagemErro("")
+                    }}
+                    className="flex-1"
+                  >
+                    Voltar
+                  </Button>
+                  <Button 
+                    variant="destructive"
+                    onClick={() => solicitarOTPCancelar(eventoSelecionado!)} 
+                    disabled={loading || !eventoSelecionado}
+                    className="flex-1"
+                  >
+                    {loading ? "Enviando..." : "Enviar código"}
+                  </Button>
+                </div>
+              </div>
+            </DialogDescription>
+          </DialogHeader>
+        </DialogContent>
+      </Dialog>
+
+      {/* Modal OTP Cancelamento */}
+      <Dialog open={modalOtpCancelarOpen} onOpenChange={setModalOtpCancelarOpen}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Confirme o Cancelamento</DialogTitle>
+            <DialogDescription>
+              <div className="flex flex-col gap-4 mt-4">
+                {mensagemErro && (
+                  <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded">
+                    {mensagemErro}
+                  </div>
+                )}
+
+                <p className="text-sm">
+                  Digite o código de 6 dígitos que foi enviado para <strong>{eventoSelecionado?.criador_email}</strong>
+                </p>
+
+                <Input 
+                  type="text"
+                  value={otpCancelar} 
+                  onChange={e => setOtpCancelar(e.target.value.replace(/\D/g, '').slice(0, 6))} 
+                  placeholder="000000"
+                  className="text-center text-2xl tracking-widest"
+                  maxLength={6}
+                />
+
+                <p className="text-xs text-muted-foreground">
+                  O código expira em 5 minutos. Verifique sua caixa de entrada e spam.
+                </p>
+
+                <Alert className="border-red-200 bg-red-50 dark:bg-red-950 dark:border-red-800">
+                  <AlertCircle className="h-4 w-4 text-red-600" />
+                  <AlertDescription className="text-red-800 dark:text-red-300 text-sm">
+                    <strong>Atenção:</strong> Esta ação não pode ser desfeita. A reunião será permanentemente cancelada.
+                  </AlertDescription>
+                </Alert>
+
+                <div className="flex gap-2">
+                  <Button 
+                    variant="outline"
+                    onClick={() => {
+                      setModalOtpCancelarOpen(false)
+                      setModalCancelarOpen(true)
+                      setOtpCancelar("")
+                    }}
+                    className="flex-1"
+                  >
+                    Voltar
+                  </Button>
+                  <Button 
+                    variant="destructive"
+                    onClick={confirmarCancelamento} 
+                    disabled={loading || otpCancelar.length !== 6}
+                    className="flex-1"
+                  >
+                    {loading ? "Cancelando..." : "Confirmar cancelamento"}
                   </Button>
                 </div>
               </div>

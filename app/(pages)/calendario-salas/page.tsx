@@ -44,11 +44,7 @@ export default function CalendarioSalasPage() {
       });
       setSalas(salasData);
 
-      // Buscar agendamentos do mês atual
-      const hoje = new Date();
-      const mes = hoje.getMonth() + 1;
-      const ano = hoje.getFullYear();
-      
+      // Buscar agendamentos
       const agendamentos = await pb.collection('agendamento_salas_reuniao').getFullList<Agendamento>({
         expand: 'sala',
         sort: 'data,hora_inicio',
@@ -90,7 +86,12 @@ export default function CalendarioSalasPage() {
   };
 
   useEffect(() => {
+    const controller = new AbortController();
     fetchData();
+
+    return () => {
+      controller.abort();
+    };
   }, []);
 
   if (loading) {

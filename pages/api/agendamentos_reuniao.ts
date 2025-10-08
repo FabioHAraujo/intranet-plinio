@@ -17,11 +17,12 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     if (mes && ano) {
       const mesStr = String(mes).padStart(2, '0');
       const anoStr = String(ano);
-      const dataInicio = `${anoStr}-${mesStr}-01`;
-      const ultimoDia = new Date(Number(anoStr), Number(mes), 0).getDate();
-      const dataFim = `${anoStr}-${mesStr}-${ultimoDia}`;
+      const dataInicio = `${ano}-${mes.toString().padStart(2, '0')}-01`;
+      const ultimoDia = new Date(parseInt(ano), parseInt(mes), 0).getDate();
+      const dataFim = `${ano}-${mes.toString().padStart(2, '0')}-${ultimoDia}`;
       
-      filter = `data >= "${dataInicio}" && data <= "${dataFim}"`;
+      // Usando operador & ao invés de &&
+      filter = `data >= "${dataInicio}" & data <= "${dataFim}"`;
     }
 
     const agendamentos = await pb.collection('agendamento_salas_reuniao').getFullList({
