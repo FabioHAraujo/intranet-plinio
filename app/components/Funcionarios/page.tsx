@@ -19,6 +19,13 @@ interface Funcionario {
   FUNCIONARIO: string;
   SETOR: string;
   ADMISSAO: string;
+  diaAdmissao?: number;
+}
+
+// Função para converter data UTC para data local sem perder dia
+function parseUTCDate(dateString: string): Date {
+  const date = new Date(dateString);
+  return new Date(date.getUTCFullYear(), date.getUTCMonth(), date.getUTCDate());
 }
 
 // Função para obter a URL da foto
@@ -46,12 +53,15 @@ function FuncionarioCard({ funcionario }: { funcionario: Funcionario }) {
 
   const calcularAnosNaEmpresa = (dataAdmissao: string) => {
     if (!dataAdmissao) return 'Data não disponível';
-    const entrada = new Date(dataAdmissao);
+    const entrada = parseUTCDate(dataAdmissao);
     const hoje = new Date();
     const anosDeServico = hoje.getFullYear() - entrada.getFullYear();
     const mesDeEntrada = entrada.getMonth();
     const mesAtual = hoje.getMonth();
-    if (mesDeEntrada > mesAtual || (mesDeEntrada === mesAtual && entrada.getDate() > hoje.getDate())) {
+    const diaDeEntrada = entrada.getDate();
+    const diaAtual = hoje.getDate();
+    
+    if (mesDeEntrada > mesAtual || (mesDeEntrada === mesAtual && diaDeEntrada > diaAtual)) {
       return anosDeServico - 1;
     }
     return anosDeServico;
@@ -78,7 +88,7 @@ function FuncionarioCard({ funcionario }: { funcionario: Funcionario }) {
           Setor: {funcionario.SETOR || 'Setor não disponível'}
         </p>
         <p className="text-sm text-muted-foreground text-center">
-          Admissão: {funcionario.ADMISSAO ? new Date(funcionario.ADMISSAO).toLocaleDateString() : 'Data não disponível'}
+          Admissão: {funcionario.ADMISSAO ? parseUTCDate(funcionario.ADMISSAO).toLocaleDateString('pt-BR') : 'Data não disponível'}
         </p>
         <p className="text-sm text-muted-foreground text-center">
           Anos na empresa: {calcularAnosNaEmpresa(funcionario.ADMISSAO)}
@@ -136,8 +146,8 @@ export default function Funcionarios() {
   }
 
   const funcionariosPorMesEDia = funcionarios.reduce((acc, funcionario) => {
-    const dataAdmissao = new Date(funcionario.ADMISSAO);
-    const mesAdmissao = dataAdmissao.toLocaleString('default', { month: 'long' });
+    const dataAdmissao = parseUTCDate(funcionario.ADMISSAO);
+    const mesAdmissao = dataAdmissao.toLocaleString('pt-BR', { month: 'long' });
     const diaAdmissao = dataAdmissao.getDate();
 
     if (!acc[mesAdmissao]) {
@@ -157,7 +167,7 @@ export default function Funcionarios() {
   );
 
   mesesOrdenados.forEach(mes => {
-    funcionariosPorMesEDia[mes].sort((a, b) => a.diaAdmissao - b.diaAdmissao);
+    funcionariosPorMesEDia[mes].sort((a, b) => (a.diaAdmissao || 0) - (b.diaAdmissao || 0));
   });
 
   return (
