@@ -175,6 +175,27 @@ export function FullScreenCalendar({ data, salas, onReload }: FullScreenCalendar
     setLoading(true)
 
     try {
+      // Primeiro, verificar se há conflito de horário
+      const checkResponse = await fetch("/api/verificar_disponibilidade_sala", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          sala_id: novaSala,
+          data: novaData ? format(novaData, "yyyy-MM-dd") : "",
+          hora_inicio: novaHoraInicio,
+          hora_fim: novaHoraFim,
+        }),
+      })
+
+      const checkResult = await checkResponse.json()
+
+      if (!checkResponse.ok || !checkResult.disponivel) {
+        setMensagemErro(checkResult.error || "Horário já ocupado para esta sala")
+        setLoading(false)
+        return
+      }
+
+      // Se não há conflito, enviar OTP
       const response = await fetch("/api/enviar_otp_reuniao", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -190,7 +211,7 @@ export function FullScreenCalendar({ data, salas, onReload }: FullScreenCalendar
         setMensagemErro(result.error || "Erro ao enviar código")
       }
     } catch (error) {
-      setMensagemErro("Erro ao enviar código de verificação")
+      setMensagemErro("Erro ao verificar disponibilidade")
     } finally {
       setLoading(false)
     }
