@@ -157,7 +157,7 @@ export default function LayoutPadrao({ children }: LayoutProps) {
               className="flex items-center gap-2 rounded-lg px-3 py-2 text-muted-foreground transition-all hover:text-foreground hover:bg-accent"
             >
               <CalendarDays className="h-4 w-4" />
-              Salas de Reunião
+              Calendário de Salas
             </button>
             <div className="flex flex-col">
               <button
