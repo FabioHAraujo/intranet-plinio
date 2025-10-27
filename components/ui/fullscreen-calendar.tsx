@@ -27,6 +27,7 @@ import {
   X,
   AlertCircle,
 } from "lucide-react"
+import { toast } from "sonner"
 
 import { cn } from "@/lib/utils"
 import { Button } from "@/components/ui/button"
@@ -159,16 +160,28 @@ export function FullScreenCalendar({ data, salas, onReload }: FullScreenCalendar
     
     if (!novaTitulo || !novaSala || !novaData || !novaHoraInicio || !novaHoraFim || !novoEmail) {
       setMensagemErro("Preencha todos os campos obrigatórios")
+      toast.warning("Campos obrigatórios não preenchidos", {
+        description: "Por favor, preencha todos os campos obrigatórios",
+        duration: 4000,
+      })
       return
     }
 
     if (!novoEmail.includes("@")) {
       setMensagemErro("E-mail inválido")
+      toast.error("E-mail inválido", {
+        description: "Por favor, digite um e-mail válido",
+        duration: 4000,
+      })
       return
     }
 
     if (novaHoraInicio >= novaHoraFim) {
       setMensagemErro("O horário de término deve ser após o horário de início")
+      toast.warning("Horário inválido", {
+        description: "O horário de término deve ser após o horário de início",
+        duration: 4000,
+      })
       return
     }
 
@@ -191,6 +204,10 @@ export function FullScreenCalendar({ data, salas, onReload }: FullScreenCalendar
 
       if (!checkResponse.ok || !checkResult.disponivel) {
         setMensagemErro(checkResult.error || "Horário já ocupado para esta sala")
+        toast.error("Sala indisponível", {
+          description: "Esta sala já está ocupada no horário selecionado",
+          duration: 5000,
+        })
         setLoading(false)
         return
       }
@@ -207,11 +224,23 @@ export function FullScreenCalendar({ data, salas, onReload }: FullScreenCalendar
       if (response.ok) {
         setModalNovaOpen(false)
         setModalOtpOpen(true)
+        toast.info("Código de verificação enviado", {
+          description: `Verifique o e-mail ${novoEmail}`,
+          duration: 5000,
+        })
       } else {
         setMensagemErro(result.error || "Erro ao enviar código")
+        toast.error("Erro ao enviar código", {
+          description: result.error || "Não foi possível enviar o código de verificação",
+          duration: 5000,
+        })
       }
     } catch (error) {
       setMensagemErro("Erro ao verificar disponibilidade")
+      toast.error("Erro de conexão", {
+        description: "Não foi possível verificar a disponibilidade da sala",
+        duration: 5000,
+      })
     } finally {
       setLoading(false)
     }
@@ -253,11 +282,25 @@ export function FullScreenCalendar({ data, salas, onReload }: FullScreenCalendar
         setModalOtpOpen(false)
         resetForm()
         onReload()
+        
+        // Notificação de sucesso
+        toast.success("Reunião agendada com sucesso!", {
+          description: `${novaTitulo} - ${format(novaData!, "dd/MM/yyyy")} às ${novaHoraInicio}`,
+          duration: 5000,
+        })
       } else {
         setMensagemErro(result.error || "Erro ao confirmar agendamento")
+        toast.error("Erro ao agendar reunião", {
+          description: result.error || "Não foi possível confirmar o agendamento",
+          duration: 5000,
+        })
       }
     } catch (error) {
       setMensagemErro("Erro ao confirmar agendamento")
+      toast.error("Erro ao agendar reunião", {
+        description: "Ocorreu um erro ao tentar agendar a reunião",
+        duration: 5000,
+      })
     } finally {
       setLoading(false)
     }
@@ -301,11 +344,23 @@ export function FullScreenCalendar({ data, salas, onReload }: FullScreenCalendar
       if (response.ok) {
         setModalCancelarOpen(false)
         setModalOtpCancelarOpen(true)
+        toast.info("Código de verificação enviado", {
+          description: `Verifique o e-mail ${event.criador_email}`,
+          duration: 5000,
+        })
       } else {
         setMensagemErro(result.error || "Erro ao enviar código")
+        toast.error("Erro ao enviar código", {
+          description: result.error || "Não foi possível enviar o código de verificação",
+          duration: 5000,
+        })
       }
     } catch (error) {
       setMensagemErro("Erro ao enviar código de verificação")
+      toast.error("Erro de conexão", {
+        description: "Não foi possível enviar o código de verificação",
+        duration: 5000,
+      })
     } finally {
       setLoading(false)
     }
@@ -341,17 +396,33 @@ export function FullScreenCalendar({ data, salas, onReload }: FullScreenCalendar
       const result = await response.json()
 
       if (response.ok) {
+        const tituloEvento = eventoSelecionado.titulo
+        
         setModalOtpCancelarOpen(false)
         setModalCancelarOpen(false)
         setModalOpen(false)
         setEventoSelecionado(null)
         setOtpCancelar("")
         onReload()
+        
+        // Notificação de sucesso
+        toast.success("Reunião cancelada com sucesso!", {
+          description: `${tituloEvento} foi removida do calendário`,
+          duration: 5000,
+        })
       } else {
         setMensagemErro(result.error || "Erro ao confirmar cancelamento")
+        toast.error("Erro ao cancelar reunião", {
+          description: result.error || "Não foi possível cancelar a reunião",
+          duration: 5000,
+        })
       }
     } catch (error) {
       setMensagemErro("Erro ao confirmar cancelamento")
+      toast.error("Erro ao cancelar reunião", {
+        description: "Ocorreu um erro ao tentar cancelar a reunião",
+        duration: 5000,
+      })
     } finally {
       setLoading(false)
     }

@@ -25,6 +25,7 @@ import {
 import Image from "next/image"
 import { Separator } from '@/components/ui/separator'
 import { motion, AnimatePresence } from 'framer-motion'
+import { Toaster } from "@/components/ui/sonner"
 
 import logo from '@/assets/logo.png'
 
@@ -269,6 +270,7 @@ export default function LayoutPadrao({ children }: LayoutProps) {
           {children}
         </main>
       </div>
+      <Toaster />
     </div>
   )
 }

@@ -88,10 +88,6 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         <li><strong>Horário:</strong> ${hora_inicio} - ${hora_fim}</li>
         ${participantes && participantes.length > 0 ? `<li><strong>Participantes:</strong> ${participantes.join(', ')}</li>` : ''}
       </ul>
-      <p style="margin-top: 20px;">
-        <strong>📅 Um evento foi anexado a este e-mail.</strong><br>
-        Abra o anexo <code>reuniao.ics</code> para adicionar à sua agenda (Outlook, Gmail, Apple Calendar, etc).
-      </p>
     `;
 
     await fetch(process.env.WEBHOOK_NOTICIAS as string, {
@@ -120,10 +116,6 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
           <li><strong>Data:</strong> ${dataFormatada}</li>
           <li><strong>Horário:</strong> ${hora_inicio} - ${hora_fim}</li>
         </ul>
-        <p style="margin-top: 20px;">
-          <strong>📅 Um convite foi anexado a este e-mail.</strong><br>
-          Abra o anexo <code>reuniao.ics</code> para adicionar à sua agenda (Outlook, Gmail, Apple Calendar, etc).
-        </p>
       `;
 
       for (const participante of participantes) {

@@ -1,0 +1,585 @@
+\documentclass[12pt,a4paper]{article}
+\usepackage[utf8]{inputenc}
+\usepackage[brazil]{babel}
+\usepackage{graphicx}
+\usepackage{float}
+\usepackage{hyperref}
+\usepackage{geometry}
+\usepackage{fancyhdr}
+\usepackage{titlesec}
+\usepackage{xcolor}
+\usepackage{enumitem}
+\usepackage{setspace}
+\usepackage{times}
+\onehalfspacing
+
+% Configuração de página
+\geometry{
+    a4paper,
+    left=2.5cm,
+    right=2.5cm,
+    top=3cm,
+    bottom=3cm
+}
+
+% Cabeçalho e rodapé
+\pagestyle{fancy}
+\fancyhf{}
+\fancyhead[L]{\textit{Manual de Reserva de Salas de Reunião}}
+\fancyhead[R]{\textit{Intranet Grupo Plínio Fleck}}
+\fancyfoot[C]{\thepage}
+
+% Cores personalizadas
+\definecolor{primary}{RGB}{0, 102, 204}
+\definecolor{secondary}{RGB}{102, 102, 102}
+
+% Configuração de títulos
+\titleformat{\section}
+{\color{primary}\normalfont\Large\bfseries}
+{\thesection}{1em}{}
+
+\titleformat{\subsection}
+{\color{secondary}\normalfont\large\bfseries}
+{\thesubsection}{1em}{}
+
+% Informações do documento
+\title{
+    \begin{center}
+        \vspace*{-3cm}
+        {\Large\textbf{GRUPO PLÍNIO FLECK}}\\[1cm]
+        {\Huge\textbf{Manual de Treinamento}}\\[0.5cm]
+        {\Large Sistema de Reserva de Salas de Reunião}\\[0.3cm]
+        {\large Intranet Grupo Plínio Fleck}\\[3cm]
+        {\normalsize \textbf{Departamento de Tecnologia da Informação}}\\[0.3cm]
+    \end{center}
+}
+
+\author{}
+\date{}
+
+\begin{document}
+
+\maketitle
+\thispagestyle{empty}
+
+\vspace{2cm}
+
+\begin{center}
+\textbf{Resumo}
+\end{center}
+
+\noindent
+Este manual tem como objetivo orientar os colaboradores sobre o uso do \textbf{Sistema de Reserva de Salas de Reunião} disponível na Intranet. O sistema permite visualizar a disponibilidade das salas, realizar agendamentos, gerenciar reservas e cancelar reuniões quando necessário.
+
+\vfill
+\begin{center}
+    \textit{Campo Bom, \today}
+\end{center}
+\newpage
+\tableofcontents
+\newpage
+
+\section{Introdução}
+
+O Sistema de Reserva de Salas de Reunião foi desenvolvido para facilitar o agendamento e gerenciamento de espaços de reunião na empresa. Com ele, é possível:
+
+\begin{itemize}[leftmargin=*]
+    \item Visualizar a disponibilidade das salas em tempo real
+    \item Agendar reuniões de forma rápida e intuitiva
+    \item Convidar participantes que receberão notificações por e-mail
+    \item Gerenciar e cancelar suas reservas
+    \item Evitar conflitos de horários
+    \item Visualizar eventos recorrentes
+\end{itemize}
+
+\section{Acessando o Sistema}
+
+Para acessar o Sistema de Reserva de Salas, siga os passos abaixo:
+
+\begin{enumerate}[leftmargin=*]
+    \item Acesse a Intranet da empresa através do navegador
+    \item No menu principal, clique em \textbf{``Calendário de Salas''}
+    \item O sistema será carregado automaticamente
+\end{enumerate}
+
+\begin{figure}[H]
+    \centering
+    \fbox{\includegraphics[width=0.9\textwidth]{print01.png}}
+    \caption{Tela inicial da Intranet com acesso ao Calendário de Salas}
+    \label{fig:acesso}
+\end{figure}
+
+\newpage
+
+\section{Interface do Calendário}
+
+\subsection{Visão Geral}
+
+A interface principal do sistema apresenta um calendário completo onde você pode visualizar todas as reservas das salas de reunião.
+
+\begin{figure}[H]
+    \centering
+    \fbox{\includegraphics[width=0.9\textwidth]{print02.png}}
+    \caption{Visão geral da interface do calendário de salas}
+    \label{fig:interface}
+\end{figure}
+
+\subsection{Elementos da Interface}
+
+A interface é composta pelos seguintes elementos:
+
+\begin{itemize}[leftmargin=*]
+    \item \textbf{Barra de Navegação:} Permite navegar entre os meses (setas esquerda/direita)
+    \item \textbf{Botão ``Hoje'':} Retorna rapidamente para o mês atual
+    \item \textbf{Indicador do Mês/Ano:} Mostra o período sendo visualizado
+    \item \textbf{Botão ``Nova Reunião'':} Abre o formulário para criar um novo agendamento
+    \item \textbf{Grade do Calendário:} Exibe os dias do mês com os agendamentos
+    \item \textbf{Indicadores de Eventos:} Pequenos marcadores nos dias com reuniões agendadas
+\end{itemize}
+
+\newpage
+
+\section{Visualizando Agendamentos}
+
+\subsection{Ver Reuniões de um Dia}
+
+Para visualizar as reuniões agendadas em um dia específico:
+
+\begin{enumerate}[leftmargin=*]
+    \item Clique sobre o dia desejado no calendário
+    \item Uma janela flutuante será aberta mostrando todos os agendamentos daquele dia
+    \item As reuniões são listadas em ordem cronológica
+\end{enumerate}
+
+\begin{figure}[H]
+    \centering
+    \fbox{\includegraphics[width=0.9\textwidth]{print03.png}}
+    \caption{Visualização de agendamentos de um dia específico}
+    \label{fig:ver_dia}
+\end{figure}
+
+\textit{\textbf{Descrição do Print 3:} Capturar a tela com um dia selecionado (deve estar destacado) e o painel lateral aberto mostrando a lista de reuniões daquele dia, com informações como título, horário e sala de cada reunião.}
+
+\subsection{Detalhes de uma Reunião}
+
+Cada reunião exibida mostra as seguintes informações:
+
+\begin{itemize}[leftmargin=*]
+    \item Título da reunião
+    \item Horário de início e término
+    \item Nome da sala reservada
+    \item E-mail do organizador
+    \item Lista de participantes (se houver)
+\end{itemize}
+
+\begin{figure}[H]
+    \centering
+    \fbox{\includegraphics[width=0.7\textwidth]{print04.png}}
+    \caption{Detalhes de uma reunião específica}
+    \label{fig:detalhes}
+\end{figure}
+
+\textit{\textbf{Descrição do Print 4:} Capturar um card ou modal mostrando os detalhes completos de uma reunião específica, incluindo todos os campos: título, data, horário de início e fim, sala, organizador e lista de participantes.}
+
+\newpage
+
+\section{Criando uma Nova Reserva}
+
+\subsection{Passo 1: Abrindo o Formulário}
+
+Para criar uma nova reserva de sala:
+
+\begin{enumerate}[leftmargin=*]
+    \item Clique no botão \textbf{``Nova Reunião''} localizado no topo do calendário
+    \item O formulário de agendamento será aberto
+\end{enumerate}
+
+\begin{figure}[H]
+    \centering
+    \fbox{\includegraphics[width=0.9\textwidth]{print05.png}}
+    \caption{Botão para criar nova reunião}
+    \label{fig:botao_nova}
+\end{figure}
+
+\textit{\textbf{Descrição do Print 5:} Capturar a parte superior do calendário com destaque para o botão ``Nova Reunião'' ou ``Agendar Reunião''. O botão deve estar visível e em evidência.}
+
+\subsection{Passo 2: Preenchendo os Dados}
+
+No formulário de agendamento, preencha os seguintes campos:
+
+\begin{itemize}[leftmargin=*]
+    \item \textbf{Título da Reunião:} Nome descritivo da reunião
+    \item \textbf{Data:} Selecione o dia da reunião usando o calendário
+    \item \textbf{Horário de Início:} Hora que a reunião começará
+    \item \textbf{Horário de Término:} Hora que a reunião terminará
+    \item \textbf{Sala:} Selecione a sala desejada no menu dropdown
+    \item \textbf{Participantes:} (Opcional) Liste os e-mails dos participantes separados por vírgula
+\end{itemize}
+
+\begin{figure}[H]
+    \centering
+    \fbox{\includegraphics[width=0.8\textwidth]{print06.png}}
+    \caption{Formulário de agendamento de reunião}
+    \label{fig:formulario}
+\end{figure}
+
+\textit{\textbf{Descrição do Print 6:} Capturar o formulário completo de criação de reunião, mostrando todos os campos vazios ou parcialmente preenchidos como exemplo. Deve incluir todos os campos mencionados acima e os botões de ação (Salvar/Cancelar).}
+
+\newpage
+
+\subsection{Passo 3: Selecionando a Sala}
+
+Ao clicar no campo de seleção de sala:
+
+\begin{enumerate}[leftmargin=*]
+    \item Um menu dropdown será exibido com todas as salas disponíveis
+    \item As salas são listadas em ordem alfabética
+    \item Clique na sala desejada para selecioná-la
+\end{enumerate}
+
+\begin{figure}[H]
+    \centering
+    \fbox{\includegraphics[width=0.7\textwidth]{print07.png}}
+    \caption{Menu de seleção de sala de reunião}
+    \label{fig:selecao_sala}
+\end{figure}
+
+\textit{\textbf{Descrição do Print 7:} Capturar o campo de seleção de sala com o dropdown aberto, mostrando a lista de salas disponíveis. Exemplo: Sala 1, Sala 2, Sala de Conferência, etc.}
+
+\subsection{Passo 4: Adicionando Participantes}
+
+Para adicionar participantes à reunião:
+
+\begin{enumerate}[leftmargin=*]
+    \item No campo ``Participantes'', digite os e-mails separados por vírgula
+    \item Exemplo: \texttt{usuario1@empresa.com.br, usuario2@empresa.com.br}
+    \item Os participantes receberão um e-mail com os detalhes da reunião e arquivo ICS
+    \item Este campo é opcional
+\end{enumerate}
+
+\begin{figure}[H]
+    \centering
+    \fbox{\includegraphics[width=0.8\textwidth]{print08.png}}
+    \caption{Campo para adicionar participantes}
+    \label{fig:participantes}
+\end{figure}
+
+\textit{\textbf{Descrição do Print 8:} Capturar o campo de participantes preenchido com alguns exemplos de e-mails separados por vírgula. Mostrar como deve ser o formato correto de entrada.}
+
+\newpage
+
+\subsection{Passo 5: Confirmando o Agendamento}
+
+Após preencher todos os campos obrigatórios:
+
+\begin{enumerate}[leftmargin=*]
+    \item Revise todas as informações inseridas
+    \item Clique no botão \textbf{``Agendar''} ou \textbf{``Salvar''}
+    \item Aguarde a confirmação do sistema
+    \item Uma mensagem de sucesso será exibida
+    \item O calendário será atualizado automaticamente
+\end{enumerate}
+
+\begin{figure}[H]
+    \centering
+    \fbox{\includegraphics[width=0.7\textwidth]{print09.png}}
+    \caption{Mensagem de confirmação de agendamento}
+    \label{fig:confirmacao}
+\end{figure}
+
+\textit{\textbf{Descrição do Print 9:} Capturar a mensagem de sucesso/confirmação que aparece após criar um agendamento com sucesso. Pode ser um toast, modal ou alerta mostrando ``Reunião agendada com sucesso'' ou mensagem similar.}
+
+\section{Verificando Conflitos de Horário}
+
+O sistema impede automaticamente conflitos de agendamento:
+
+\begin{itemize}[leftmargin=*]
+    \item Se tentar agendar uma sala já ocupada no horário selecionado, o sistema exibirá um erro
+    \item A mensagem indicará que a sala não está disponível naquele horário
+    \item Você deverá escolher outro horário ou outra sala
+\end{itemize}
+
+\begin{figure}[H]
+    \centering
+    \fbox{\includegraphics[width=0.7\textwidth]{print10.png}}
+    \caption{Mensagem de erro por conflito de horário}
+    \label{fig:conflito}
+\end{figure}
+
+\textit{\textbf{Descrição do Print 10:} Capturar a mensagem de erro que aparece quando tenta-se agendar uma sala que já está ocupada no horário selecionado. Deve mostrar claramente a mensagem de erro informando sobre o conflito.}
+
+\newpage
+
+\section{Cancelando uma Reserva}
+
+\subsection{Processo de Cancelamento}
+
+Para cancelar uma reserva existente:
+
+\begin{enumerate}[leftmargin=*]
+    \item Localize a reunião no calendário clicando no dia correspondente
+    \item Na lista de reuniões, identifique a reunião que deseja cancelar
+    \item Clique no botão \textbf{``Cancelar''} ou ícone de cancelamento
+    \item O sistema solicitará um código de verificação (OTP)
+\end{enumerate}
+
+\begin{figure}[H]
+    \centering
+    \fbox{\includegraphics[width=0.8\textwidth]{print11.png}}
+    \caption{Botão para cancelar reunião}
+    \label{fig:botao_cancelar}
+\end{figure}
+
+\textit{\textbf{Descrição do Print 11:} Capturar um card de reunião com destaque para o botão ou ícone de cancelamento. Deve mostrar uma reunião específica com a opção de cancelar visível.}
+
+\subsection{Verificação por OTP}
+
+Por segurança, o cancelamento requer verificação:
+
+\begin{enumerate}[leftmargin=*]
+    \item Um código OTP (One-Time Password) será enviado para seu e-mail
+    \item Acesse seu e-mail e copie o código recebido
+    \item Digite o código no campo de verificação
+    \item Clique em \textbf{``Confirmar Cancelamento''}
+\end{enumerate}
+
+\begin{figure}[H]
+    \centering
+    \fbox{\includegraphics[width=0.7\textwidth]{print12.png}}
+    \caption{Tela de verificação OTP para cancelamento}
+    \label{fig:otp}
+\end{figure}
+
+\textit{\textbf{Descrição do Print 12:} Capturar a tela ou modal de verificação OTP, mostrando o campo onde o usuário deve inserir o código recebido por e-mail e o botão de confirmação.}
+
+\newpage
+
+\subsection{E-mail com Código OTP}
+
+O e-mail de verificação contém:
+
+\begin{itemize}[leftmargin=*]
+    \item Código OTP (geralmente 6 dígitos)
+    \item Informações sobre a reunião a ser cancelada
+    \item Prazo de validade do código (normalmente 10 minutos)
+\end{itemize}
+
+\begin{figure}[H]
+    \centering
+    \fbox{\includegraphics[width=0.8\textwidth]{print13.png}}
+    \caption{E-mail com código OTP para cancelamento}
+    \label{fig:email_otp}
+\end{figure}
+
+\textit{\textbf{Descrição do Print 13:} Capturar um exemplo de e-mail recebido com o código OTP. Deve mostrar o código em destaque, informações da reunião e instruções para uso do código.}
+
+\subsection{Confirmação de Cancelamento}
+
+Após inserir o código correto:
+
+\begin{enumerate}[leftmargin=*]
+    \item O sistema validará o código OTP
+    \item A reunião será removida do calendário
+    \item Uma mensagem de confirmação será exibida
+    \item Todos os participantes receberão um e-mail de cancelamento
+\end{enumerate}
+
+\begin{figure}[H]
+    \centering
+    \fbox{\includegraphics[width=0.7\textwidth]{print14.png}}
+    \caption{Confirmação de cancelamento da reunião}
+    \label{fig:confirmacao_cancelamento}
+\end{figure}
+
+\textit{\textbf{Descrição do Print 14:} Capturar a mensagem de sucesso após cancelamento da reunião, mostrando ``Reunião cancelada com sucesso'' ou mensagem similar.}
+
+\newpage
+
+\section{E-mails e Notificações}
+
+\subsection{E-mail de Convite}
+
+Quando uma reunião é criada, os participantes recebem um e-mail contendo:
+
+\begin{itemize}[leftmargin=*]
+    \item Título da reunião
+    \item Data e horário
+    \item Sala reservada
+    \item Nome do organizador
+    \item Arquivo ICS anexo (para adicionar ao calendário pessoal)
+\end{itemize}
+
+\begin{figure}[H]
+    \centering
+    \fbox{\includegraphics[width=0.8\textwidth]{print15.png}}
+    \caption{E-mail de convite para reunião}
+    \label{fig:email_convite}
+\end{figure}
+
+\textit{\textbf{Descrição do Print 15:} Capturar um exemplo de e-mail de convite que os participantes recebem ao serem incluídos em uma reunião. Deve mostrar todos os detalhes da reunião e mencionar o anexo ICS.}
+
+\subsection{Anexo ICS}
+
+O arquivo ICS (iCalendar) permite:
+
+\begin{itemize}[leftmargin=*]
+    \item Adicionar automaticamente a reunião ao calendário pessoal
+    \item Compatível com Outlook, Google Calendar, Apple Calendar, etc.
+    \item Basta clicar no arquivo para importar
+    \item Inclui lembretes automáticos
+\end{itemize}
+
+\begin{figure}[H]
+    \centering
+    \fbox{\includegraphics[width=0.7\textwidth]{print16.png}}
+    \caption{Arquivo ICS anexado ao e-mail}
+    \label{fig:ics}
+\end{figure}
+
+\textit{\textbf{Descrição do Print 16:} Capturar o anexo ICS no e-mail, mostrando o arquivo anexado (geralmente com ícone de calendário) e seu nome. Pode também mostrar como fica após importar no calendário pessoal.}
+
+\newpage
+
+\section{Recursos Avançados}
+
+\subsection{Eventos Recorrentes}
+
+O sistema suporta visualização de eventos recorrentes:
+
+\begin{itemize}[leftmargin=*]
+    \item Reuniões que se repetem periodicamente são exibidas no calendário
+    \item Identifique padrões de ocupação das salas
+    \item Facilita o planejamento de longo prazo
+\end{itemize}
+
+\subsection{Navegação por Período}
+
+Para facilitar a visualização:
+
+\begin{itemize}[leftmargin=*]
+    \item Use as setas para navegar entre meses
+    \item Clique em ``Hoje'' para retornar ao mês atual
+    \item Visualize meses futuros para planejar com antecedência
+\end{itemize}
+
+\begin{figure}[H]
+    \centering
+    \fbox{\includegraphics[width=0.9\textwidth]{print17.png}}
+    \caption{Controles de navegação entre meses}
+    \label{fig:navegacao}
+\end{figure}
+
+\textit{\textbf{Descrição do Print 17:} Capturar os controles de navegação do calendário (setas para anterior/próximo mês e botão ``Hoje'') em destaque. Pode mostrar a transição entre meses diferentes.}
+
+\section{Boas Práticas}
+
+Para melhor aproveitamento do sistema, recomenda-se:
+
+\begin{enumerate}[leftmargin=*]
+    \item \textbf{Planeje com antecedência:} Reserve as salas com pelo menos 24h de antecedência
+    \item \textbf{Seja pontual:} Respeite os horários de início e fim das reuniões
+    \item \textbf{Cancele reservas não utilizadas:} Libere a sala se a reunião for cancelada
+    \item \textbf{Títulos descritivos:} Use títulos claros para facilitar a identificação
+    \item \textbf{Confirme participantes:} Verifique se todos os e-mails estão corretos
+    \item \textbf{Verifique conflitos:} Sempre consulte o calendário antes de agendar
+    \item \textbf{Atualize informações:} Mantenha seu e-mail de contato atualizado
+\end{enumerate}
+
+\newpage
+
+\section{Solução de Problemas}
+
+\subsection{Problemas Comuns}
+
+\subsubsection{Não consigo agendar uma sala}
+
+\textbf{Possíveis causas:}
+\begin{itemize}[leftmargin=*]
+    \item A sala já está ocupada no horário desejado
+    \item Horário de término anterior ao horário de início
+    \item Campos obrigatórios não preenchidos
+\end{itemize}
+
+\textbf{Solução:}
+\begin{itemize}[leftmargin=*]
+    \item Verifique a disponibilidade da sala no calendário
+    \item Confira se os horários estão corretos
+    \item Preencha todos os campos obrigatórios
+\end{itemize}
+
+\subsubsection{Não recebi o código OTP}
+
+\textbf{Possíveis causas:}
+\begin{itemize}[leftmargin=*]
+    \item E-mail na caixa de spam
+    \item E-mail incorreto cadastrado
+    \item Atraso no envio do e-mail
+\end{itemize}
+
+\textbf{Solução:}
+\begin{itemize}[leftmargin=*]
+    \item Verifique a caixa de spam/lixo eletrônico
+    \item Aguarde alguns minutos e tente novamente
+    \item Entre em contato com o suporte de TI
+\end{itemize}
+
+\subsubsection{Participantes não receberam o convite}
+
+\textbf{Possíveis causas:}
+\begin{itemize}[leftmargin=*]
+    \item E-mails digitados incorretamente
+    \item E-mails na caixa de spam dos participantes
+    \item Problemas no servidor de e-mail
+\end{itemize}
+
+\textbf{Solução:}
+\begin{itemize}[leftmargin=*]
+    \item Verifique se os e-mails foram digitados corretamente
+    \item Peça aos participantes para verificarem o spam
+    \item Reenvie o convite ou notifique manualmente
+\end{itemize}
+
+\newpage
+
+\section{Suporte Técnico}
+
+Em caso de dúvidas ou problemas não solucionados por este manual:
+
+\vspace{0.5cm}
+
+\begin{itemize}[leftmargin=*]
+    \item \textbf{Departamento:} TI - Tecnologia da Informação
+    \item \textbf{E-mail:} suporte@empresa.com.br
+    \item \textbf{Ramal:} XXXX
+    \item \textbf{Horário de atendimento:} Segunda a sexta, das 8h às 18h
+\end{itemize}
+
+\vspace{1cm}
+
+\section{Controle de Versões}
+
+\begin{table}[H]
+\centering
+\begin{tabular}{|c|c|p{6cm}|c|}
+\hline
+\textbf{Versão} & \textbf{Data} & \textbf{Descrição} & \textbf{Autor} \\
+\hline
+1.0 & \today & Versão inicial do manual & TI \\
+\hline
+& & & \\
+\hline
+& & & \\
+\hline
+\end{tabular}
+\caption{Histórico de versões do documento}
+\end{table}
+
+\vspace{2cm}
+
+\begin{center}
+\hrule
+\vspace{0.3cm}
+\textit{Este manual é um documento interno da empresa e não deve ser distribuído externamente sem autorização.}
+\end{center}
+
+\end{document}
