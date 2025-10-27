@@ -402,6 +402,7 @@ export function FullScreenCalendar({ data, salas, onReload }: FullScreenCalendar
                           size="sm"
                           onClick={() => {
                             setEventoSelecionado(event)
+                            setMensagemErro("")
                             setModalCancelarOpen(true)
                           }}
                           className="ml-2"
