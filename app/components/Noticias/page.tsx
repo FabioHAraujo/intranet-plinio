@@ -24,12 +24,20 @@ export default function Noticias() {
 
   const fetchNoticias = async (signal?: AbortSignal) => {
     try {
-      const response = await fetch("https://pocketbase.flecksteel.com.br/api/collections/noticias/records", {
-        signal,
-      });
+      // Solicita mais registros e ordena pelos mais recentes primeiro
+      const response = await fetch(
+        "https://pocketbase.flecksteel.com.br/api/collections/noticias/records?perPage=100&sort=-created",
+        {
+          signal,
+        }
+      );
       const data = await response.json();
+      // Debug: inspecionar o que veio do servidor
+      // Remova ou comente estes logs em produção
+      // eslint-disable-next-line no-console
+      console.debug("Resposta /noticias/records:", data);
   
-      const mappedNoticias = data.items.map((item: any) => ({
+      const mappedNoticias: Noticia[] = data.items.map((item: any) => ({
         id: item.id,
         titulo: item.titulo,
         imagemUrl: item.banner
@@ -39,9 +47,16 @@ export default function Noticias() {
         tags: item.tags?.tags || [],
         texto: item.texto, // Incluído o texto da notícia
       }));
+
+      // Debug: verificar mapeamento
+      // eslint-disable-next-line no-console
+      console.debug(
+        "Notícias mapeadas:",
+        mappedNoticias.map((n: Noticia) => ({ id: n.id, titulo: n.titulo, dataPublicacao: n.dataPublicacao }))
+      );
   
       // Ordena as notícias da mais nova para a mais velha
-      const sortedNoticias = mappedNoticias.sort((a, b) => 
+      const sortedNoticias = mappedNoticias.sort((a: Noticia, b: Noticia) =>
         new Date(b.dataPublicacao).getTime() - new Date(a.dataPublicacao).getTime()
       );
   
